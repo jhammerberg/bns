@@ -71,7 +71,7 @@ int main(void){
         }
     }
 
-    /*
+    
     if (hub75_init(SystemCoreClock) != HUB75_OK) {
         for (;;) { }  // Initialization errors leave OE HIGH (blank).
     }
@@ -84,6 +84,6 @@ int main(void){
         hub75_refresh();   // REQUIRED continuously, even for a still image.
         // Short, nonblocking input/game work may go here.
     }
-    */
+    
 }
 /* [] END OF FILE */

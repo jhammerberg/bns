@@ -18,12 +18,12 @@
         //mtb//      macOS  : $HOME/Library/Application Support/Code/User/settings.json
         //mtb//      Linux  : $HOME/.config/Code/User/settings.json
         //mtb//
-        "modustoolbox.toolsPath": "C:/Users/ryand/ModusToolbox/tools_3.9",
-        "cortex-debug.armToolchainPath": "C:/Users/ryand/Infineon/Tools/mtb-gcc-arm-eabi/14.2.1/gcc/bin",
-        "cortex-debug.openocdPath": "${config:modustoolbox.toolsPath}/../../../../Infineon/Tools/ModusToolboxProgtools-1.9/openocd/bin/openocd.exe",
-        "cortex-debug.JLinkGDBServerPath.windows": "C:/Program Files/SEGGER/JLink_V974/JLinkGDBServerCL.exe",
-        "cortex-debug.JLinkGDBServerPath.osx": "C:/Program Files/SEGGER/JLink_V974/JLinkGDBServerCL.exe",
-        "cortex-debug.JLinkGDBServerPath.linux": "C:/Program Files/SEGGER/JLink_V974/JLinkGDBServerCL.exe",
+        "modustoolbox.toolsPath": "C:/Infineon/Tools/ModusToolbox/tools_3.9",
+        "cortex-debug.armToolchainPath": "C:/Infineon/Tools/mtb-gcc-arm-eabi/14.2.1/gcc/bin",
+        "cortex-debug.openocdPath": "${config:modustoolbox.toolsPath}/../../ModusToolboxProgtools-1.9/openocd/bin/openocd.exe",
+        "cortex-debug.JLinkGDBServerPath.windows": "C:/Program Files/SEGGER/JLink_V968/JLinkGDBServerCL.exe",
+        "cortex-debug.JLinkGDBServerPath.osx": "C:/Program Files/SEGGER/JLink_V968/JLinkGDBServerCL.exe",
+        "cortex-debug.JLinkGDBServerPath.linux": "C:/Program Files/SEGGER/JLink_V968/JLinkGDBServerCL.exe",
         "C_Cpp.intelliSenseEngine": "disabled",
         "clangd.detectExtensionConflicts": false
     },

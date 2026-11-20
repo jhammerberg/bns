@@ -4,24 +4,6 @@
 #include <stdio.h>
 #include "player.h"
 
-#define MANA_REGEN_RATE 5
-
-struct Player {
-    int id;
-    int health;
-    int mana;
-    enum inputs inputBuffer[7];
-    int inputCount;
-    bool shieldActive;
-    int shieldHealth;
-    volatile bool reset;
-};
-
-typedef struct longestCombo {
-    struct Spell spell;
-    int length;
-} longestCombo;
-
 struct longestCombo findLongestMatchingSpell(struct Player player) {
     enum inputs *inputBuffer = player.inputBuffer;
 

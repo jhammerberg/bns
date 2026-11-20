@@ -1,31 +1,6 @@
 #define MAX_COMBO 7
 #include "spells.h"
-
-enum inputs {
-    up, // 0
-    right, // 1
-    down, // 2
-    left, // 3
-    none // 4
-};
-
-enum spellType {
-    ATTACK,
-    SHIELD,
-    HEAL
-};
-
-typedef struct Spell {
-    char* spellName;
-    enum spellType type;
-    int manaCost;
-    int healthEffect;
-    int shieldHealth;
-    int comboLength;
-    enum inputs combo[MAX_COMBO]; 
-} Spell;
-
-static const struct Spell SPELLS[] = {
+const struct Spell SPELLS[] = {
     { // FIREBALL
         .spellName = "FIREBALL",
         .type = ATTACK,

@@ -34,15 +34,15 @@ void reset_game(struct Player *player1, struct Player *player2) {
 
 void countdown() {
     // display countdown on screen
-    hub75_draw("3", 0, 0, HUB75_WHITE, HUB75_BLACK);
+    hub75_draw_char('3', 0, 0, HUB75_WHITE, HUB75_BLACK);
     hub75_refresh();
-    delay(1000);
-    hub75_draw("2", 0, 0, HUB75_WHITE, HUB75_BLACK);
+    // delay(1000);
+    hub75_draw_char('2', 0, 0, HUB75_WHITE, HUB75_BLACK);
     hub75_refresh();
-    delay(1000);
-    hub75_draw("1", 0, 0, HUB75_WHITE, HUB75_BLACK);
+    // delay(1000);
+    hub75_draw_char('1', 0, 0, HUB75_WHITE, HUB75_BLACK);
     hub75_refresh();
-    delay(1000);
+    // delay(1000);
 }
 
 
@@ -59,7 +59,7 @@ void end_game(int winner, struct Player *player1, struct Player *player2) {
         // Wait for reset input from both players
         if(player1->reset && player2->reset) {
             // Reset the game
-            start_game(&player1, &player2);
+            start_game(player1, player2);
             break;
         }
     }

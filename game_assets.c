@@ -1,25 +1,7 @@
 #include "hub75.h"
 #include "hub75_text.h"
 #include "spells.h"
-
-
-
-
-#define HEALTH_NAME_X 0
-#define HEALTH_NAME_Y 10
-
-
-#define MANA_NAME_X 0
-#define MANA_NAME_Y 20
-
-#define HEALTH_BAR_X 10
-#define HEALTH_BAR_Y 10
-
-#define MANA_BAR_X 10
-#define MANA_BAR_Y 20
-
-#define BAR_WIDTH 32
-#define BAR_HEIGHT 2
+#include "game_assets.h"
 
 void draw_health(int x, int y) {
     hub75_draw_text("HEALTH", HEALTH_NAME_X, HEALTH_NAME_Y, HUB75_WHITE, HUB75_BLACK);
@@ -44,12 +26,6 @@ void draw_mana_bar(int totalMana) {
     }
     hub75_fill_rect(MANA_BAR_X, MANA_BAR_Y, displayMana, BAR_HEIGHT, HUB75_BLUE);
 }
-
-
-#define upArrow 0x18
-#define downArrow 0x19
-#define rightArrow 0x1A
-#define leftArrow 0x1B
 
 void draw_combo(int x, int y, Spell spell) {
     for(int i = 0; i < spell.comboLength; i++) {
