@@ -1,0 +1,305 @@
+                   深圳市富满电子集团股份有限公司
+                       SHEN ZHEN FINE MAD ELECTRONICS GROUP CO., LTD.
+FM6124 (文件编号：S&CIC1501)                     16 路双缓存恒流输出 LED 驱动芯片
+概述
+   FM6124 是一款专为 LED 模块和显示器设计的驱动 IC，具有 16 路恒定的电流输出驱动能力。FM6124 采用了“输
+出钳位”专利技术，可以有效消除第一行偏暗现象，同时可以防止灯珠损坏。FM6124 采用加强的消隐功能设计，
+具有极佳的消隐效果。同时 FM6124 具有极佳的抗干扰特性，恒流及低灰效果不受 PCB 板的影响。并可选用不同
+的外接电阻对输出级电流大小进行任意调节，精确控制 LED 的发光亮度。
+  FM6124 在显示过程(OE 的下降沿)会缓存 16bit 显示数据，所以系统在 FM6124 显示的过程中可以再继续存入
+16bit 串行数据，相比通用恒流源芯片，刷新率可以提高 50%以上。
+  FM6124 内部采用了电流精确控制技术，可使片间误差低于±3.5%，通道间误差低于±2%。
+
+
+特点
+   16 路等电流输出通道
+   输出电流设定范围：
+    0.5～35mA×16@VDD=5V 路恒定电流输出
+    0.5～25mA×16@VDD=3.3V 路恒定电流输出
+   电流精度
+    通道间的电流非一致性：±1.25%(一般值)
+                       ±2%(最大值)
+    芯片间的电流非一致性：±2%(一般值)
+                       ±3.5%(最大值)
+   快速输出电流响应（最小值）：30ns@VDD=5V
+   I/O 施密特触发器触发输入
+   数据传输频率：fMAX=30MHz(最大)
+   ESD HBM PASS 4KV
+   供电电压：VDD=3.3～6V
+   工作温度范围：Topr=-40～85℃
+   具有改善灯珠损坏功能
+   具有极佳的消隐效果
+   有效地消除第一行偏暗、低灰色块、低灰偏色和低灰麻点现象
+   具有极佳的抗干扰能力和低灰度效果
+   改善因灯珠损坏产生的毛毛虫现象
+   集成双缓存，刷新率比通用恒流芯片提高 50%以上
+   封装形式：SSOP-24
+
+
+
+
+www.superchip.cn                   第 1 页 共 10 页                 Version 1.0
+                   深圳市富满电子集团股份有限公司
+                   SHEN ZHEN FINE MAD ELECTRONICS GROUP CO., LTD.
+FM6124 (文件编号：S&CIC1501)                 16 路双缓存恒流输出 LED 驱动芯片
+引脚定义及说明
+                             引脚序号    引脚定义              引脚名称
+
+                               1       GND            芯片接地引脚
+
+                               2       SDI     输入到移位寄存器的串行数据输入端
+
+                               3       CLK           时钟信号输入端
+                                              数据锁存输入端 LE 高电平时，数据被传入
+                               4        LA
+                                                    到锁存器中。
+                              5-20                    恒电流输出端
+                                              输出使能信号输入端，并在下降沿处缓存数
+                                                        据
+                               21
+                                                OE 高电平时，关断 OUT0-OUT15
+                                                OE 低电平时，打开 OUT0-OUT15
+                                              串行数据输出端，可接到下一个驱动芯片的
+                               22      SDO
+                                                      SDI 端
+                                              外接调节电阻的输出端，可调节所有通道的
+                               23     REXT
+                                                    输出电流大小
+                               24      VDD          3.3V/5V 电源输入端
+
+
+
+内部框图
+
+
+
+
+www.superchip.cn               第 2 页 共 10 页                     Version 1.0
+                   深圳市富满电子集团股份有限公司
+                   SHEN ZHEN FINE MAD ELECTRONICS GROUP CO., LTD.
+FM6124 (文件编号：S&CIC1501)                 16 路双缓存恒流输出 LED 驱动芯片
+I/O 等效电路
+
+
+
+
+时序图
+
+
+
+
+www.superchip.cn               第 3 页 共 10 页                 Version 1.0
+                         深圳市富满电子集团股份有限公司
+                            SHEN ZHEN FINE MAD ELECTRONICS GROUP CO., LTD.
+FM6124 (文件编号：S&CIC1501)                              16 路双缓存恒流输出 LED 驱动芯片
+真值表
+
+           CLK          LE               SIN                 ···          ···              SOUT
+
+                        H           L     Dn          DN`···DN-7···DN-15                   DN-15
+                        L           L    Dn+1                      无变化                     DN-14
+                        H           L    Dn+2        DN+2···DN-5···DN-13                   DN-13
+                        X           L    Dn+3        DN+2···DN-5···DN-13                   DN-13
+                        X           H    Dn+3                       OFF                    DN-13
+
+
+
+绝对最大额定值(TA=25℃)
+                             特性               符号                   额定值              单位
+                             电源电压             VDD                   0-7.0            V
+                             输出电流              IO                    35             mA
+                             输入电压             VIN            -0.4—VDD+0.4            V
+                        输出耐受电压             VOUT                      30              V
+                             时钟频率          FCLK                      30             MHZ
+                         接地端电流                IGND                  +600            mA
+                             消耗功耗              PD                     3             W
+                             热阻抗          RTH(j-a)                  39.15           ℃/W
+                             工作温度          TOPR                    -40—85           ℃
+                             存储温度          TSTG                    -55—150          ℃
+
+
+直流特性(如不另外说明，TA=40℃—85℃)
+                   特性             符号    测试条件         最小值                  典型值            最大值       单位
+             电源电压               VDD       -            3.3                      5          6.0      V
+
+         ON 时的输出电压             VO(ON)                  0.6                      -          4        V
+
+        高电平逻辑输入电压                 VIH     -          0.7*VDD                    -         VDD       V
+        低电平逻辑输入电压                 VIL     -           GND                       -        0.3*VDD    V
+      SOUT 高电平输出电流                IOH   VDD=5V           -                  -1              -      mA
+      SOUT 低电平输出电流                IOL   VDD=5V           -                      1           -      mA
+
+             恒流输出                 IO                   0.5                      -          35      mA
+
+
+
+
+www.superchip.cn                          第 4 页 共 10 页                                             Version 1.0
+                            深圳市富满电子集团股份有限公司
+                            SHEN ZHEN FINE MAD ELECTRONICS GROUP CO., LTD.
+FM6124 (文件编号：S&CIC1501)                                    16 路双缓存恒流输出 LED 驱动芯片
+动态特性(如不另外说明，VDD=4.5—5.5V，TA=40℃—85℃)
+       特性                 符号       测试电路            测试条件           最小值       典型值     最大值         单位
+串行数据传输频率                  FCLK       6                -              -       -      30          MHZ
+  时钟脉冲宽度                 TWCLK       6             SCK=H/L          20       -       -           nS
+  缓存脉冲宽度                  TWLE       6              LE=H            20       -       -           nS
+
+  使能脉冲宽度                  TWOE       6          =H/L ，REXT=890Ω     30       -       -           nS
+
+                         THOLD1      6                -              5       -       -           nS
+    保持时间
+                         THOLD2      6                -              5       -       -           nS
+                         TSETUP1     6                -              5       -       -           nS
+    建立时间
+                         TSETUP2     6                -              5       -       -           nS
+最大时钟上升时间                   TR        6                               -       -      500          nS
+最大时钟下降时间                   TR        6                               -       -      500          nS
+
+
+
+电气特性
+   特性          符号         测试电路                测试条件                最小值       典型值     最大值          单位
+高电平逻辑
+               VOH          1              IOH=-1mA，SOUT          VDD-0.4     -     VDD           V
+输出电压
+低电平逻辑
+               VOL          1             IOH=+1mA，SOUT              -        -      0.4          V
+输出电压
+高电平逻辑
+                   IIH      2            VIN=VDD,OE,SIN，CLK          -        -      1            uA
+输入电流
+低电平逻辑
+                   IIL      3            VIN=GND,LE,SIN，CLK          -        -      -1           uA
+输入电流
+               IDD1         4            REXT=未接，OUT OFF             -       2.0     5.0         mA
+               IDD2         4            REXT=1200，OUT OFF           -       5.5     9           mA
+ 电源电流          IDD3         4            REXT=600，OUT OFF            -       6.5     10          mA
+               IDD4         4            REXT=1200，OUT ON            -       8.2     12          mA
+               IDD5         4            REXT=600，OUT ON             -       10      15          mA
+               IO1          5      VDD=5.0V，VO=2.0V,REXT=1.19KΩ      -       15       -          mA
+ 恒流输出
+               IO2          5      VDD=5.0V，VO=2.0V,REXT=595Ω        -       30       -          mA
+
+ 恒流误差          △IO          5      VDD=5.0V，VO=2.0V,REXT=1.19KΩ      -      ±0.15   ±0.37        mA
+
+恒流电源电          %VD                          VDD=4.5-5.5V
+                            5                                        -      ±0.2      -          %/V
+ 压调节            D                        VO=2.0V,REXT=1.19KΩ
+
+www.superchip.cn                               第 5 页 共 10 页                               Version 1.0
+                        深圳市富满电子集团股份有限公司
+                         SHEN ZHEN FINE MAD ELECTRONICS GROUP CO., LTD.
+FM6124 (文件编号：S&CIC1501)                              16 路双缓存恒流输出 LED 驱动芯片
+恒流输出电          %VO                       VDD=5.0V
+                         5                                        -        ±0.1           %/V
+ 压调节            UT                VO=1.0-3.0V,REXT=1.19KΩ
+
+ 上拉电阻          RUP       3                                       200       240    350      KΩ
+
+               RDO
+ 下拉电阻                    2                   LE                  250       340    450      KΩ
+               WN
+
+
+开关特性
+     特性                       符号      测试电路           测试条件         最小值      典型值    最大值     单位
+
+                              TPLH3      6            LE=H             -     25    40
+传输延迟时间                                                                                     nS
+                              TPHL3      6            LE=H             -     30    50
+                   CLK-SOUT   TPHL       6               -             -     25    30
+       输出端上升时间                TOR        6        电压波形的 10-90%         -     15    20      nS
+
+       输出端下降时间                TOR        6        电压波形的 90-10%         -     26    31      nS
+
+
+
+
+www.superchip.cn                          第 6 页 共 10 页                             Version 1.0
+                            深圳市富满电子集团股份有限公司
+                            SHEN ZHEN FINE MAD ELECTRONICS GROUP CO., LTD.
+FM6124 (文件编号：S&CIC1501)                                      16 路双缓存恒流输出 LED 驱动芯片
+测试电路
+
+
+                                                               RL=150Ω
+
+                                CLK       VDD     OUT0              CL
+                                SIN
+                   F.G          LE                             RL
+                                                  OUT7
+                                OE                                  CL
+                                                               RL
+
+                                                  OUT15
+                                   REXT   GND   SOUT
+                                                                CL=10pF
+
+               VIH=VDD
+               VIL=0V
+
+
+
+                                                                          V0=1V,3V,10V   VDD=4.5-5.5V
+               Tr=Tf=10ns
+
+                                                   CL=10pF
+               (10-90%)
+
+                               R=890Ω
+
+
+
+
+时序波形
+1.CLK，SIN，SOUT
+
+
+
+
+www.superchip.cn                            第 7 页 共 10 页                                                Version 1.0
+                   深圳市富满电子集团股份有限公司
+                   SHEN ZHEN FINE MAD ELECTRONICS GROUP CO., LTD.
+FM6124 (文件编号：S&CIC1501)                 16 路双缓存恒流输出 LED 驱动芯片
+2.CLK，SIN，LE，OE，OUTN
+
+
+
+
+3.OUTN
+
+
+
+
+www.superchip.cn               第 8 页 共 10 页                 Version 1.0
+                   深圳市富满电子集团股份有限公司
+                   SHEN ZHEN FINE MAD ELECTRONICS GROUP CO., LTD.
+FM6124 (文件编号：S&CIC1501)                 16 路双缓存恒流输出 LED 驱动芯片
+应用信息
+FM6124 采用了精确电流驱动控制技术，同一芯片的不同通道间，不同芯片之间的电流差异极小。
+1) 通道间电流差异<±2%，芯片间的电流差异<±3.5%。
+2) 具有不受负载端电压影响的电流输出特性，如下图所示。输出电流将不随 LED 顺向电压 VF
+的变化而变化。
+
+
+
+
+调节输出电流
+FM6124 通过外接电阻 Rext 来调节输出电流（Iout），计算公式为：
+VR-EXT=1.191V；
+Iout=(VR-EXT/Rext)*15
+
+
+
+
+www.superchip.cn               第 9 页 共 10 页                 Version 1.0
+                   深圳市富满电子集团股份有限公司
+                   SHEN ZHEN FINE MAD ELECTRONICS GROUP CO., LTD.
+FM6124 (文件编号：S&CIC1501)                  16 路双缓存恒流输出 LED 驱动芯片
+封装信息
+
+
+
+
+www.superchip.cn               第 10 页 共 10 页                 Version 1.0
+

@@ -1,0 +1,2696 @@
+                                                                            Errata Sheet
+                                                                            Rel. 1.3, 2018-07
+Device           XMC4100/XMC4200
+Marking/Step     ES-BA, BA
+Package          PG-VQFN-48, PG-(LT)QFP-64
+
+
+
+
+Overview
+Document ID is 086/18.
+This “Errata Sheet” describes product deviations with respect to the user
+documentation listed below.
+
+Table 1      Current User Documentation
+Document                                                     Version Date
+XMC4100/XMC4200 Reference Manual                             V1.6           July 2016
+XMC4100/XMC4200 Data Sheet                                   V1.3           October 2015
+
+Make sure that you always use the latest documentation for this device listed in
+category “Documents” at http://www.infineon.com/xmc4000.
+
+Notes
+1. The errata described in this sheet apply to all temperature and frequency
+   versions and to all memory size and configuration variants of affected
+   devices, unless explicitly noted otherwise.
+2. Devices marked with EES or ES are engineering samples which may not be
+   completely tested in all functional and electrical characteristics, therefore
+   they must be used for evaluation only. Specific test conditions for EES and
+   ES are documented in a separate “Status Sheet”, delivered with the device.
+3. XMC4000 devices are equipped with an ARM® Cortex®-M4 core. Some of
+   the errata have a workaround which may be supported by some compiler
+   tools. In order to make use of the workaround the corresponding compiler
+   switches may need to be set.
+
+
+
+
+XMC4100/XMC4200, ES-BA, BA                 1/64                                Rel. 1.3, 2018-07
+                   Subject to Agreement on the Use of Product Information
+                                                                             Errata Sheet
+
+
+Conventions used in this Document
+Each erratum is identified by Module_Marker.TypeNumber:
+•   Module: Subsystem, peripheral, or function affected by the erratum.
+•   Marker: Used only by Infineon internal.
+•   Type: type of deviation
+    – (none): Functional Deviation
+    – P: Parametric Deviation
+    – H: Application Hint
+    – D: Documentation Update
+•   Number: Ascending sequential number. As this sequence is used over
+    several derivatives, including already solved deviations, gaps inside this
+    enumeration can occur.
+
+
+
+
+XMC4100/XMC4200, ES-BA, BA                  2/64                             Rel. 1.3, 2018-07
+                    Subject to Agreement on the Use of Product Information
+                                                                             Errata Sheet
+                                                           History List / Change Summary
+
+1           History List / Change Summary
+
+Table 2     History List
+Version      Date                Remark
+1.0          2016-05             Initial BA step version. Previous step was AB.
+                                 Changes wrt. XMC4100/XMC4200 AB Errata
+                                 Sheet v1.3 (2016-05): Added ORC_CM.P001
+1.1          2016-10             Added: ADC_CM.001, CCU_AI.008,
+                                 DAC_CM.003, STARTUP_CM.002,
+                                 MultiCAN_AI.H009, WDT_CM.D001
+1.2          2017-08             This Document.
+                                 Added Functional Deviation: ACD_CM.002
+                                 For changes see column "Chg" in the tables
+                                 below.
+1.3          2018-07             Added Functional Deviations: CPU_CM.005
+                                 Added Documentation Updates:
+                                 MPU_CM.D001, STARTUP_CM.D003
+                                 For changes see column "Chg" in the tables
+                                 below.
+
+
+Table 3     Errata fixed in this step
+Errata                   Short Description                                         Change
+HRPWM_AI.001             HRPWM output signal interference while                    Fixed
+                         using two control sources
+HRPWM_AI.002             HRPWM CSG missing DAC conversion                          Fixed
+                         trigger in static mode
+HRPWM_AI.004             HRPWM Peripheral Bus Clock Limitation                     Fixed
+POWER_CM.P001            Risk of increased current consumption in                  Fixed
+                         internally controlled hibernate mode
+
+
+
+
+XMC4100/XMC4200, ES-BA, BA                  3/64                             Rel. 1.3, 2018-07
+                    Subject to Agreement on the Use of Product Information
+                                                                            Errata Sheet
+                                                          History List / Change Summary
+
+
+Table 4      Functional Deviations
+Functional          Short Description                                          Chg Pg
+Deviation
+ADC_AI.008          Wait-for-Read condition for register                               9
+                    GLOBRES not detected in continuous
+                    auto-scan sequence
+ADC_AI.016          No Channel Interrupt in Fast Compare                               10
+                    Mode with GLOBRES
+ADC_CM.001          Conversion results can be wrong if groups                          10
+                    are not synchronized
+ADC_CM.002          Converter diagnostics not functional                               12
+ADC_TC.064          Effect of conversions in 10-bit fast                               13
+                    compare mode on post-calibration
+CACHE_CM.001        Instruction buffer invalidation control bit                        14
+                    needs to be cleared after an invalidation
+                    was triggered
+CCU8_AI.003         CCU8 Parity Checker Interrupt Status is                            15
+                    cleared automatically by hardware
+CCU8_AI.004         CCU8 output PWM glitch when using low                              17
+                    side modulation via the Multi Channel
+                    Mode
+CCU8_AI.006         Timer concatenation does not work when                             20
+                    using external count signal
+CCU_AI.002          CCU4 and CCU8 Prescaler                                            21
+                    synchronization clear does not work when
+                    Module Clock is faster than Peripheral Bus
+                    Clock
+CCU_AI.004          CCU4 and CCU8 Extended Read Back loss                              22
+                    of data
+CCU_AI.005          CCU4 and CCU8 External IP clock Usage                              24
+CCU_AI.006          Value update not usable in period dither                           26
+                    mode
+
+
+XMC4100/XMC4200, ES-BA, BA                 4/64                             Rel. 1.3, 2018-07
+                   Subject to Agreement on the Use of Product Information
+                                                                            Errata Sheet
+                                                          History List / Change Summary
+
+Table 4      Functional Deviations (cont’d)
+Functional          Short Description                                          Chg Pg
+Deviation
+CCU_AI.008          Clock ratio limitation when using MCSS                             26
+                    inputs
+CPU_CM.001          Interrupted loads to SP can cause                                  27
+                    erroneous behavior
+CPU_CM.004          VDIV or VSQRT instructions might not                               28
+                    complete correctly when very short ISRs
+                    are used
+CPU_CM.005          Store immediate overlapping exception      New 30
+                    return operation might vector to incorrect
+                    interrupt
+DAC_CM.003          FIFO usage limitation in “Data Processing                          31
+                    Mode”
+DTS_CM.001          DTS offset calibration value limitations                           31
+FCE_CM.001          Result value is wrong if read directly after                       32
+                    last write
+LEDTS_AI.001        Delay in the update of FNCTL.PADT bit                              32
+                    field
+PORTS_CM.005        Different PORT register reset values after                         37
+                    module reset
+PORTS_CM.007        P14 and P15 cannot be used in boundary                             38
+                    scan test
+POSIF_AI.001        Input Index signal from Rotary Encoder is                          39
+                    not decoded when the length is 1/4 of the
+                    tick period
+SCU_CM.006          Deep sleep entry with PLL power-down                               41
+                    option generates SOSCWDGT and
+                    SVCOLCKT trap
+SCU_CM.015          Functionality of parity memory test                                41
+                    function limited
+
+
+
+XMC4100/XMC4200, ES-BA, BA                 5/64                             Rel. 1.3, 2018-07
+                   Subject to Agreement on the Use of Product Information
+                                                                            Errata Sheet
+                                                          History List / Change Summary
+
+Table 4      Functional Deviations (cont’d)
+Functional          Short Description                                          Chg Pg
+Deviation
+SCU_CM.021          Registering of service requests in SRRAW                           42
+                    register can fail
+STARTUP_CM.00 Bootstrap loader may fail for devices with                               43
+2             reduced PSRAM size
+USB_CM.004          USB core is not able to detect resume or                           44
+                    new session request after PHY clock is
+                    stopped
+USIC_AI.008         SSC delay compensation feature cannot                              45
+                    be used
+USIC_AI.010         Minimum and maximum supported word                                 45
+                    and frame length in multi-IO SSC modes
+USIC_AI.013         SCTR register bit fields DSM and HPCDIR                            46
+                    are not shadowed with start of data word
+                    transfer
+USIC_AI.014         No serial transfer possible while running                          46
+                    capture mode timer
+USIC_AI.015         Wrong generation of FIFO standard                                  46
+                    transmit/receive buffer events when
+                    TBCTR.STBTEN/RBCTR.SRBTEN = 1
+USIC_AI.016         Transmit parameters are updated during                             47
+                    FIFO buffer bypass
+USIC_AI.017         Clock phase of data shift in SSC slave                             48
+                    cannot be changed
+USIC_AI.018         Clearing PSR.MSLS bit immediately                                  48
+                    deasserts the SELOx output signal
+USIC_AI.019         First data word received by IIC receiver                           49
+                    triggers RIF instead of AIF
+
+
+
+
+XMC4100/XMC4200, ES-BA, BA                 6/64                             Rel. 1.3, 2018-07
+                   Subject to Agreement on the Use of Product Information
+                                                                            Errata Sheet
+                                                          History List / Change Summary
+
+Table 4      Functional Deviations (cont’d)
+Functional          Short Description                                          Chg Pg
+Deviation
+USIC_AI.020         Handling unused DOUT lines in multi-IO                             49
+                    SSC mode
+WDT_CM.001          No overflow is generated for WUB default                           49
+                    value
+
+
+Table 5      Deviations from Electrical- and Timing Specification
+AC/DC Deviation      Short Description                                         Chg Pg
+ORC_CM.P001          Out-of-Range Comparator maximum                                   51
+                     switching level
+POWER_CM.P003 Current consumption when executing                                       51
+              from PSRAM
+POWER_CM.P004 Current consumption while PORST low                                      52
+              can exceed specified value
+
+
+Table 6      Application Hints
+Hint                   Short Description                                       Chg Pg
+ADC_AI.H003            Injected conversion may be performed                            53
+                       with sample time of aborted conversion
+ADC_AI.H004            Completion of Startup Calibration                               54
+ADC_AI.H008            Injected conversion with broken wire                            54
+                       detection
+ADC_TC.H011            Bit DCMSB in register GLOBCFG                                   55
+LEDTS_AI.H001          Column A is unavailable                                         55
+MultiCAN_AI.H005       TxD Pulse upon short disable request                            56
+MultiCAN_AI.H006       Time stamp influenced by                                        56
+                       resynchronization
+MultiCAN_AI.H007       Alert Interrupt Behavior in case of Bus-                        57
+                       Off
+MultiCAN_AI.H008       Effect of CANDIS on SUSACK                                      57
+
+XMC4100/XMC4200, ES-BA, BA                 7/64                             Rel. 1.3, 2018-07
+                   Subject to Agreement on the Use of Product Information
+                                                                            Errata Sheet
+                                                          History List / Change Summary
+
+Table 6     Application Hints (cont’d)
+Hint                   Short Description                                       Chg Pg
+MultiCAN_AI.H009       Behavior of MSGVAL for Remote                                   58
+                       Frames in Single Data Transfer Mode -
+                       Documentation Update
+MultiCAN_TC.H003       Message may be discarded before                                 59
+                       transmission in STT mode
+MultiCAN_TC.H004       Double remote request                                           59
+RESET_CM.H001          Power-on reset release                                          60
+USIC_AI.H004           I2C slave transmitter recovery from                             61
+                       deadlock situation
+
+
+Table 7     Documentation Updates
+Hint                   Short Description                                       Chg Pg
+MPU_CM.D001            No restrictions on using Bit5 to Bit8 of                New 62
+                       register MPU_RBAR
+STARTUP_CM.D003 Alignment of ABM/PSRAM Header                                  New 62
+WDT_CM.D001            Correction to section "Pre-warning                              63
+                       Mode"
+
+
+
+
+XMC4100/XMC4200, ES-BA, BA                 8/64                             Rel. 1.3, 2018-07
+                   Subject to Agreement on the Use of Product Information
+                                                                              Errata Sheet
+                                                                       Functional Deviations
+
+2            Functional Deviations
+The errata in this section describe deviations from the documented functional
+behavior.
+
+
+ADC_AI.008 Wait-for-Read condition for register GLOBRES not detected
+in continuous auto-scan sequence
+
+In the following scenario:
+•   A continuous auto-scan is performed over several ADC groups and
+    channels by the Background Scan Source, using the global result register
+    (GLOBRES) as result target (GxCHCTRy.RESTBS=1B), and
+•   The Wait-for-Read mode for GLOBRES is enabled (GLOBRCR.WFR=1B),
+each conversion of the auto-scan sequence has to wait for its start until the
+result of the previous conversion has been read out of GLOBRES.
+When the last channel of the auto-scan is converted and its result written to
+GLOBRES, the auto-scan re-starts with the highest channel number of the
+highest ADC group number. But the start of this channel does not wait until the
+result of the lowest channel of the previous sequence has been read from
+register GLOBRES, i.e. the result of the lowest channel may be lost.
+
+Workaround
+If either the last or the first channel in the auto-scan sequence does not write its
+result into GLOBRES, but instead into its group result register (selected via bit
+GxCHCTRy.RESTBS=0B), then the Wait-for-Read feature for GLOBRES works
+correctly for all other channels of the auto-scan sequence.
+For this purpose, the auto-scan sequence may be extended by a “dummy”
+conversion of group x/ channel y, where the Wait-for-Read mode must not be
+selected (GxRCRy.WFR=0B) if the result of this “dummy” conversion is not
+read.
+
+
+
+
+XMC4100/XMC4200, ES-BA, BA                  9/64                              Rel. 1.3, 2018-07
+                    Subject to Agreement on the Use of Product Information
+                                                                              Errata Sheet
+                                                                       Functional Deviations
+
+ADC_AI.016 No Channel Interrupt in Fast Compare Mode with GLOBRES
+
+In fast compare mode, the compare value is taken from bitfield RESULT of the
+selected result register and the result of the comparison is stored in the
+respective bit FCR.
+A channel event can be generated when the input becomes higher or lower than
+the compare value.
+In case the global result register GLOBRES is selected, the comparison is
+executed correctly, the target bit is stored correctly, source events and result
+events are generated, but a channel event is not generated.
+
+Workaround
+If channel events are required, choose a local result register GxRESy for the
+operation of the fast compare channel.
+
+
+ADC_CM.001 Conversion results can be wrong if groups are not synchro-
+nized
+
+The VADC module clock fADC is internally divided by each of the converter
+groups Gx separately to fADCI(Gx). The division factor is programmable by bit field
+DIVA of register GLOBCFG: fADCI = fADC / (DIVA+1) valid for DIVA >= 1.
+Due to this architecture, the individual prescalers may be displaced by one
+module clock as shown in the figure below for G02 and G11. In this example the
+division factor is 5 (DIVA=4).
+
+
+
+
+XMC4100/XMC4200, ES-BA, BA                 10/64                              Rel. 1.3, 2018-07
+                    Subject to Agreement on the Use of Product Information
+                                                                                 Errata Sheet
+                                                                       Functional Deviations
+
+
+
+       tADC                     1     2    3     4    5     6    7     8     9   10
+
+
+
+       tADCI(G0)               G01                        G02
+
+
+
+       tADCI(G1)                                                G11
+
+
+
+       VAREF
+
+
+
+Figure 1      Influence of concurrent conversions on reference voltage
+In cycle 1 only the G0 conversion step is started. At start time the reference
+voltage is strobed and a certain amount of electric charge (see data sheet
+parameter QCONV) is consumed. This causes a drop of the reference voltage
+level VAREF. Quantity of voltage drop depends on analog voltage level to
+convert.
+In cycle 6 another G0 conversion step is starting and in cycle 7 a G1 conversion
+step. In this case the reference voltage may not yet be fully recovered when the
+G1 conversion step strobes VREF. Consequently, the G1 conversion step yields
+an incorrect value.
+In repeated mesurements using the example setup errors up to 25 LSB have
+been observed in 10-16 of 4096 conversions. Magnitude of the error however
+depends on the system configuration and load. The workaround therefore
+should be applied for all applications.
+
+Implications
+If two or more converter groups (G0-G3) are started (initialized) asynchronously
+and multiple conversion steps or sample phases occur in the same time frame
+then the reference voltage settling time can be violated, which leads to incorrect
+conversion results.
+
+
+
+XMC4100/XMC4200, ES-BA, BA                 11/64                                 Rel. 1.3, 2018-07
+                    Subject to Agreement on the Use of Product Information
+                                                                             Errata Sheet
+                                                                      Functional Deviations
+
+Workaround
+The workaround makes sure that all ADC group clocks fADCI(Gx) are started
+concurrently. Even if your application does not require a master/slave
+configuration this sequence ensures a synchronized start behaviour.
+This example is assuming that 4 ADC groups are available and used. G0 will be
+used as master G1-G3 as slaves. If less groups are used or available it can
+simply be reduced.
+1. Disable all ADC groups (x=0-3) by clearing ASENy (y=0-2)
+   bits:GxARBPR.ASENy = 0
+2. Configure the queue, scan and background sources as required.
+3. Configure one group as master, others as slaves and set EVALRy (y=1-3):
+   GxSYNCTR.EVALRy = 1 G0SYNCTR.STSEL = 00 -- G0 is master
+   0 G1SYNCTR.STSEL = 01 -- G1 is slave of master 0
+   G2SYNCTR.STSEL = 01 -- G2 is slave of master 0
+   G3SYNCTR.STSEL = 01 -- G3 is slave of master 0
+4. Configure the slave groups G1, G2, G3
+   GxARBCFG.ANONC = 00 -- Converter off
+   -- Remaining GxARBCFG bits are set as required
+5. Configure the master G0
+   G0ARBCFG.ANONC = 11 -- Converter on
+   -- Remaining GxARBCFG bits are set as required
+If dual masters are required by the application then the sequence must be
+extended. This example changes G2 to become the second master and G3 its
+slave.
+•   Step 6:-- Change configuration of new master G3
+    G3ARBCFG.ANONC = 11 -- Converter on G2SYNCTR.STSEL = 00
+    -- make G2 master 1 G3SYNCTR.STSEL = 10 -- make G3 slave
+    of master 1
+
+
+ADC_CM.002 Converter diagnostics not functional
+
+The analog converter diagnostics feature of the VADC to test the proper
+operation is not functional.
+
+
+
+XMC4100/XMC4200, ES-BA, BA                12/64                              Rel. 1.3, 2018-07
+                   Subject to Agreement on the Use of Product Information
+                                                                              Errata Sheet
+                                                                       Functional Deviations
+
+Implications
+All diagnostic pull devices remain disconnected, also if the converter
+diagnostics feature is enabled.
+No portions of VAref can be selected for diagnostic purpose.
+
+Workaround
+None.
+
+
+ADC_TC.064 Effect of conversions in 10-bit fast compare mode on post-
+calibration
+
+The calibrated converters Gx (x = 0..3) support post-calibration. Unless
+disabled by software (via bits GLOBCFG.DPCALx = 0), a calibration step is
+performed after each conversion, incrementally increasing/decreasing internal
+calibration values to compensate process, temperature, and voltage variations.
+If a conversion in 10-bit fast-compare mode (bit field CMS/E = 101B in
+corresponding Input Class register) is performed between two conversions in
+other (non-fast-compare) modes on a converter Gx, the information gained from
+the last post-calibration step is disturbed. This will lead to a slightly less
+accurate result of the next conversion in a non-fast-compare mode.
+Depending on the ratio of conversions in fast-compare mode versus
+conversions in other modes, this effect will be more or less obvious.
+In a worst case scenario (fast-compare with a constant result injected between
+each two normal conversions), all calibration values can drift to their maxima /
+minima, causing the converter Gx to deliver considerably inaccurate results.
+
+Workaround
+Do not mix conversions using 10-bit fast-compare mode and other conversions
+with enabled postcalibration on the calibrated converters Gx (x = 0..3). Instead,
+use a dedicated group for fast-compare operations.
+
+
+
+
+XMC4100/XMC4200, ES-BA, BA                 13/64                              Rel. 1.3, 2018-07
+                    Subject to Agreement on the Use of Product Information
+                                                                              Errata Sheet
+                                                                       Functional Deviations
+
+CACHE_CM.001 Instruction buffer invalidation control bit needs to be
+cleared after an invalidation was triggered
+
+The device reference manual describes the PCON.IINV bit of PREF unit as
+write only. Writing 1B is initiating the invalidation of the instruction buffer, and
+writing 0B has no effect.
+However, writing 1B to PCON.IINV will force sustaining instruction buffer
+invalidation until the bit is cleared again by software writing 0B.
+
+Implications
+As long as PCON.IINV remains set to 1B, the system will not benefit from the
+performance improvement by the instruction buffer. In fact, as the prefetch unit
+attempts to perform instruction buffer refills in the background, the system may
+show slower code execution performance as with execution from uncached
+Flash address range or with bypassed instruction buffer.
+
+Workaround
+Execute the following sequence if the PREF instruction cache needs to be
+invalidated:
+1. Branch to RAM or uncached Flash address range.
+2. Enable the instruction buffer bypass.
+   PCON.IBYP = 1B
+3. Invalidate the instruction buffer.
+   PCON.IINV = 1B
+4. Clear the invalidate bit.
+   PCON.IINV = 0B
+5. Disable the instruction buffer bypass.
+   PCON.IBYP = 0B
+6. Read back PCON to resolve pipelining effects.
+7. Return to cacheable Flash address range.
+
+
+
+
+XMC4100/XMC4200, ES-BA, BA                 14/64                              Rel. 1.3, 2018-07
+                    Subject to Agreement on the Use of Product Information
+                                                                              Errata Sheet
+                                                                       Functional Deviations
+
+CCU8_AI.003 CCU8 Parity Checker Interrupt Status is cleared automati-
+cally by hardware
+
+Each CCU8 Module Timer has an associated interrupt status register. This
+Status register, CC8yINTS, keeps the information about which interrupt source
+triggered an interrupt. The status of this interrupt source can only be cleared by
+software. This is an advantage because the user can configure multiple
+interrupt sources to the same interrupt line and in each triggered interrupt
+routine, it reads back the status register to know which was the origin of the
+interrupt.
+Each CCU8 module also contains a function called Parity Checker. This Parity
+Checker function, crosschecks the output of a XOR structure versus an input
+signal, as seen in Figure 1.
+When using the parity checker function, the associated status bitfield, is cleared
+automatically by hardware in the next PWM cycle whenever an error is not
+present.
+This means that if in the previous PWM cycle an error was detected and one
+interrupt was triggered, the software needs to read back the status register
+before the end of the immediately next PWM cycle.
+This is indeed only necessary if multiple interrupt sources are ORed together in
+the same interrupt line. If this is not the case and the parity checker error source
+is the only one associated with an interrupt line, then there is no need to read
+back the status information. This is due to the fact, that only one action can be
+triggered in the software routine, the one linked with the parity checker error.
+
+
+
+
+XMC4100/XMC4200, ES-BA, BA                 15/64                              Rel. 1.3, 2018-07
+                    Subject to Agreement on the Use of Product Information
+                                                                                                               Errata Sheet
+                                                                                                  Functional Deviations
+
+                                                       Selection
+
+                                                                   GPCHK.PCTS
+
+                                       CCU8x.OUT00
+                                                                      XOR
+                                       CCU8x.OUT01
+                                                                      XOR
+                    CC80               CCU8x.OUT02
+                                                                      XOR
+
+                                       CCU8x.OUT03
+                                                                      XOR
+
+
+
+
+                                       CCU8x.OUT10
+                                                                      XOR
+                                       CCU8x.OUT11
+                                                                      XOR
+                    CC81               CCU8x.OUT12
+                                                                      XOR
+
+                                       CCU8x.OUT13
+                                                                      XOR
+
+
+
+                                       CCU8x.OUT20
+                                                                      XOR
+                                       CCU8x.OUT21
+                                                                      XOR
+                    CC82               CCU8x.OUT22
+                                                                      XOR
+
+                                       CCU8x.OUT23
+                                                                      XOR
+
+
+
+
+                                       CCU8x.OUT30
+                                                                      XOR
+                                       CCU8x.OUT31
+                                                                      XOR
+                    CC83               CCU8x.OUT32
+                                                                      XOR
+
+                                       CCU8x.OUT33
+                                                                      XOR
+
+
+
+
+                     Input Signal                         Error detection       Set   Interrupt    Interrupt
+                                                               Logic                   Status
+
+
+
+                                    GPCHK.PISEL
+
+
+
+
+Figure 2    Parity Checker diagram
+
+Workaround
+Not ORing the Parity Checker error interrupt with any other interrupt source.
+With this approach, the software does not need to read back the status
+information to understand what was the origin of the interrupt - because there
+is only one source.
+
+
+
+
+XMC4100/XMC4200, ES-BA, BA                           16/64                                                     Rel. 1.3, 2018-07
+                   Subject to Agreement on the Use of Product Information
+                                                                              Errata Sheet
+                                                                       Functional Deviations
+
+CCU8_AI.004 CCU8 output PWM glitch when using low side modulation
+via the Multi Channel Mode
+
+Each CCU8 Timer Slice can be configured to use the Multi Channel Mode - this
+is done by setting the CC8yTC.MCME1 and/or CC8yTC.MCME2 bit fields to 1B.
+Each bit field enables the multi channel mode for the associated compare
+channel of the CCU8 Timer Slice (each CCU8 Timer Slice has two compare
+channels that are able to generate each a complementary pair of PWM
+outputs).
+After enabled, the Multi Channel mode is then controlled by several input
+signals, one signal per output. Whenever an input is active, the specific PWM
+output is set to passive level - Figure 1.
+The Multi Channel mode is normally used to modulate in parallel several PWM
+outputs (a complete CCU8 - up to 16 PWM signals can be modulated in
+parallel).
+A normal use case is the parallel control of the PWM output for BLDC motor
+control. In Figure 2, we can see the Multi Channel Pattern being updated
+synchronously to the PWM signals. Whenever a multi channel input is active (in
+this case 0), the specific output is set into passive level (the level in which the
+external switch is OFF).
+
+
+
+
+XMC4100/XMC4200, ES-BA, BA                 17/64                              Rel. 1.3, 2018-07
+                    Subject to Agreement on the Use of Product Information
+                                                                                                 Errata Sheet
+                                                                                 Functional Deviations
+
+
+                                                CC8y – Timer Slice y
+                                                 (output view only)
+
+
+                                                Compare Channel 1 Path
+                   CCU8x.MCIy[0]                       1          A
+                                                                  N               CCU8x.OUTy0
+                                                 1     0          D
+
+
+                                                 CC8yTC.MCME1    Other
+                                                                sources
+
+                   CCU8x.MCIy[1]                       1
+                                                                  A
+                                                                  N
+                                                                                   CCU8x.OUTy1     The specific
+  Multi Channel
+                                                 1     0          D                               outputs is set
+  mode inputs                                                                                       to passive
+  for a specific                                                                                    whenever
+                                                 Compare Channel 2 Path                             associated
+   Timer Slice
+                   CCU8x.MCIy[2]                       1          A                               multi channel
+                                                                  N               CCU8x.OUTy2     input is active
+                                                  1    0          D
+
+
+                                                CC8yTC.MCME2     Other
+                                                                sources
+
+                   CCU8x.MCIy[3]                       1
+                                                                  A
+                                                                  N               CCU8x.OUTy3
+                                                 1     0          D
+
+
+
+
+Figure 3           Multi Channel Mode diagram
+
+
+       CCU8x.OUT00
+
+
+
+       CCU8x.OUT01
+
+
+
+       CCU8x.OUT02
+
+
+
+       CCU8x.OUT03
+
+
+
+       CCU8x.OUT10
+
+
+
+       CCU8x.OUT11
+
+
+
+Multi channel pattern              011101 b                       110101 b                  110101b
+
+
+Figure 4           Multi Channel Mode applied to several CCU8 outputs
+
+
+XMC4100/XMC4200, ES-BA, BA                            18/64                                  Rel. 1.3, 2018-07
+                              Subject to Agreement on the Use of Product Information
+                                                                                     Errata Sheet
+                                                                              Functional Deviations
+
+A glitch is present at the PWM outputs whenever the dead time of the specific
+compare channel is enabled - CC8yDTC.DTE1 and/or CC8yDTC.DTE2 set to
+1B (each compare channel has a separate dead time function) - and the specific
+multi channel pattern for the channel is 01B or 10B.
+This glitch is not present if the specific timer slice is configure in symmetric edge
+aligned mode - CC8yTC.TCM = 0B and CC8yCHC.ASE = 0B.
+This glitch only affects the PWM output that is linked to the inverting ST path of
+each compare channel (non inverting outputs are not affected).
+The effect of this glitch can be seen in Figure 3. The duration of the PWM glitch
+has the same length has the dead time value programmed into the
+CC8yDC1R.DT1F field (for compare channel 1) or into the CC8yDC1R.DT2F.
+
+
+
+          CCU8x.OUT00
+
+
+
+          CCU8x.OUT01
+
+
+
+          CCU8x.OUT02
+
+
+
+          CCU8x.OUT03
+
+
+
+          CCU8x.OUT10
+
+
+
+          CCU8x.OUT11
+
+
+
+   Multi channel pattern           011101 b                    110101 b               110101b
+
+
+Figure 5          PWM output glitch
+
+Workaround
+To avoid the glitch on the inverting path of the PWM output, one can disable the
+dead time function before the Multi Channel Pattern is set to 01B or 10B.
+Disabling the dead time of the inverting PWM output can be done by setting:
+CC8yDTC.DCEN2 = 0 //if compare channel 1 is being used
+
+XMC4100/XMC4200, ES-BA, BA                        19/64                              Rel. 1.3, 2018-07
+                           Subject to Agreement on the Use of Product Information
+                                                                              Errata Sheet
+                                                                       Functional Deviations
+
+CC8yDTC.DCEN4 = 0 //if compare channel 2 is being used
+The dead time needs to be re enabled, before the complementary outputs
+become modulated at the same time:
+CC8yDTC.DCEN2 = 1 //if compare channel 1 is being used
+CC8yDTC.DCEN4 = 1 //if compare channel 2 is being used
+
+
+CCU8_AI.006 Timer concatenation does not work when using external
+count signal
+
+Each CCU8 peripheral contains four sixteen bit timers. It is possible
+nevertheless to concatenate multiple timers to achieve a timer/counter with 32,
+48 or 64 bits. To enable the concatenation feature, the CC8yCMC.TCE bitfield
+needs to be set to 1B - Figure 1 a), where CCU8x represents a CCU8 peripheral
+instance x, and CC80 and CC81, represents timer 0 and timer 1 respectively
+(please notice that CC80 and CC81 are just used for simplicity, meaning that
+this function can be used also with the other timers inside CCU8x).
+It is also possible to use an external signal as a count trigger. This means that
+when using an external count signal, the LSB timer is incremented each time
+that a transition on this external signal occurs - Figure 1 b).
+When an external count signal is enabled - by programming the
+CC8yCMC.CNTS with 01B, 10B or 11B - the concatenation function does not
+work. One cannot use in parallel the timer concatenation and external count
+signal features.
+Note: On Figure 1, the count signal is used in CCU80 because this timer
+      represents the LSBs. While the count signal could be enabled in the MSB
+      timer (CC81), this does not make sense when the timers are concatenate
+      - because the count should be used to increment the LSB timer. The LSB
+      timer will then in each wrap around, increment the MSB timer.
+
+
+
+
+XMC4100/XMC4200, ES-BA, BA                 20/64                              Rel. 1.3, 2018-07
+                    Subject to Agreement on the Use of Product Information
+                                                                                           Errata Sheet
+                                                                                Functional Deviations
+
+
+
+          CCU8x
+
+                           CC80                                     26.04.2016 - 03.05.2016
+                                                                                 32 bits
+
+
+                                            concatenation
+
+
+                           CC81                                   CC81 (MSBs)               CC80 (LSBs)
+                       CC81CMC.TCE = 1b
+
+                              ...
+
+
+
+                                                    a)
+
+
+
+          CCU8x
+                           CC80                                     26.04.2016 - 03.05.2016
+  count                                                                          32 bits
+                      CC80CMC.CNTS != 00b
+
+
+
+                                            concatenation
+
+
+                           CC81                                   CC81 (MSBs)               CC80 (LSBs)
+                       CC81CMC.TCE = 1b
+
+
+                              ...
+
+
+                                                     b)
+
+
+Figure 6          CCU8x concatenation feature resource configuration - a)
+                  without external count function; b) with external count
+                  function
+
+Workaround
+None
+
+
+CCU_AI.002 CCU4 and CCU8 Prescaler synchronization clear does not
+work when Module Clock is faster than Peripheral Bus Clock
+
+Each CCU4/CCU8 module contains a feature that allows to clear the prescaler
+division counter synchronized with the clear of a run bit of a Timer Slice. This is
+
+XMC4100/XMC4200, ES-BA, BA                       21/64                                     Rel. 1.3, 2018-07
+                        Subject to Agreement on the Use of Product Information
+                                                                              Errata Sheet
+                                                                       Functional Deviations
+
+configure via the GCTRL.PRBC field. The default value of 000B dictates that
+only the software can clear the prescaler internal division counter. Programming
+a value different from 000B into the PRBC will impose that the prescaler division
+counter is cleared to 0D whenever the selected Timer Slice (selected via the
+PRBC field) run bit is cleared (TRB bit field).
+In normal operating conditions, clearing the internal prescaler division counter
+is not needed. The only situation were a clear of the division may be needed is
+when several Timer Slices inside one unit (CCU4/CCU8) are using different
+prescaling factors and a realignment of all the timer clocks is needed. This
+normally only has a benefit if there is a big difference between the prescaling
+values, e.g. Timer Slice 0 using a module clock divided by 2D and Timer Slice 1
+using a module clock divided by 1024D.
+When the peripheral bus clock frequency is smaller than the CCU4/CCU8
+module clock frequency, fperiph < fccu, it is not possible to clear the prescaler
+division counter, synchronized with the clear of the run bit of one specific Timer
+Slice.
+
+Workaround 1
+The clearing of the prescaler internal division counter needs to be done via
+software: GCTRL.PRBC programmed with 000B and whenever a clear is
+needed, writing 1B into the GIDLS.CPRB bit field.
+
+Workaround 2
+When the usage of the Prescaler internal division clear needs to be
+synchronized with a timer run bit clear, the module clock of the CCU4/CCU8
+should be equal to the peripheral bus clock frequency: fperiph = fccu.
+To do this, the following SCU (System Control Unit) registers should be set with
+values that force this condition: CCUCLKCR.CCUDIV, CPUCLKCR.CPUDIV
+and PBCLKCR.PBDIV.
+
+
+CCU_AI.004 CCU4 and CCU8 Extended Read Back loss of data
+
+Each CCU4/CCU8 Timer Slice contains a bit field that allows the enabling of the
+Extended Read Back feature. This is done by setting the
+
+XMC4100/XMC4200, ES-BA, BA                 22/64                              Rel. 1.3, 2018-07
+                    Subject to Agreement on the Use of Product Information
+                                                                               Errata Sheet
+                                                                        Functional Deviations
+
+CC8yTC.ECM/CC4yTC.ECM = 1B. Setting this bit field to 1B only has an impact
+if the specific Timer Slice is working in Capture Mode (CC8yCMC.CAP1S or
+CC8yCMC.CAP0S different from 00B - same fields for CCU4).
+By setting the bit field to ECM = 1B, is then possible to read back the capture
+data of the specific Timer Slice (or multiple Timer Slices, if this bit field is set in
+more than one Timer Slice) trough a single address. This address is linked to
+the ECRD register.
+Referring to Figure 7, the hardware every time that the software reads back
+from the ECRD address, will return the immediately next capture register that
+contains new data. This is done in a circular access, that contains all the capture
+registers from the Timer Slices that are working in capture mode.
+When using this feature, there is the possibility of losing captured data within a
+Timer Slice. The data that is lost is always the last captured data within a timer
+slice, e.g (with CCU4 nomenclature - same applies to CCU8):
+•   Timer X has 4 capture registers and is the only Timer set with ECM = 1B. At
+    the moment that the software starts reading the capture registers via the
+    ECRD address, we have already capture four values. The ECRD read back
+    will output CC4xC0V -> CC4xC1V -> CC4xC2V -> CC4xC2V (CC4xC3V
+    value is lost)
+•   Timer X has 4 capture registers and is the only Timer set with ECM = 1B. At
+    the moment that the software starts reading the capture registers via the
+    ECRD address, we have already capture two values. The ECRD read back
+    will output CC4xC2V -> CC4xC2V (CC4xC3V value is lost)
+•   Timer X and Timer Y have 4 capture registers each and they are both
+    configured with ECM = 1B. At the moment that the software starts reading
+    the capture registers via the ECRD address, we have already capture two
+    values on Timer X and 4 on Timer Y. The ECRD read back will output
+    CC4xC0V -> CC4xC1V -> CC4xC2V -> CC4xC3V -> CC4yC2V ->
+    CC4yC2V (CC4yC3V value is lost)
+
+
+
+
+XMC4100/XMC4200, ES-BA, BA                  23/64                              Rel. 1.3, 2018-07
+                     Subject to Agreement on the Use of Product Information
+                                                                                                                  Errata Sheet
+                                                                                                      Functional Deviations
+
+
+
+                        CC40C0V              CC40C1V              CC40C2V              CC40C3V
+        Timer Slice 0   ptr stays if   ptr   ptr stays if   ptr   ptr stays if   ptr   ptr stays if
+                            full                 full                 full                 full
+
+                                                                     ptr                               SW reads from ECRD address
+                                                                                                       and HW goes through all capture
+                        CC41C0V              CC41C1V              CC41C2V              CC41C3V
+        Timer Slice 1   ptr stays if   ptr   ptr stays if   ptr   ptr stays if   ptr   ptr stays if    registers (in a circular way) and
+                            full                 full                 full                 full        returns the capture register that
+                                                                                                       contains new data
+                                                                      ptr
+
+                        CC42C0V              CC42C1V              CC42C2V              CC42C3V
+        Timer Slice 2   ptr stays if   ptr   ptr stays if   ptr   ptr stays if   ptr   ptr stays if
+                            full                 full                 full                 full
+
+                                                                     ptr
+
+                        CC43C0V              CC43C1V              CC43C2V              CC43C3V
+        Timer Slice 3   ptr stays if   ptr   ptr stays if   ptr   ptr stays if   ptr   ptr stays if
+                            full                 full                 full                 full
+
+        ptr
+
+
+
+
+Figure 7           Extended Read Back access - example for CCU4 (CCU8
+                   structure is the same)
+
+Workaround
+None.
+
+
+CCU_AI.005 CCU4 and CCU8 External IP clock Usage
+
+Each CCU4/CCU8 module offers the possibility of selecting an external signal
+to be used as the master clock for every timer inside the module Figure 1.
+External signal in this context is understood as a signal connected to other
+module/IP or connected to the device ports.
+The user has the possibility after selecting what is the clock for the module
+(external signal or the clock provided by the system), to also select if this clock
+needs to be divided. The division ratios start from 1 (no frequency division) up
+to 32768 (where the selected timer uses a frequency of the selected clock
+divided by 32768).
+This division is selected by the PSIV field inside of the CC4yPSC/CC8yPSC
+register. Notice that each Timer Slice (CC4y/CC8y) have a specific PSIV field,
+which means that each timer can operate in a different frequency.
+
+
+
+XMC4100/XMC4200, ES-BA, BA                                                  24/64                                Rel. 1.3, 2018-07
+                                  Subject to Agreement on the Use of Product Information
+                                                                                         Errata Sheet
+                                                                                Functional Deviations
+
+Currently is only possible to use an external signal as Timer Clock when a
+division ratio of 2 or higher is selected. When no division is selected (divided by
+1), the external signal cannot be used.
+The user must program the PSIV field of each Timer Slice with a value different
+from 0000B - minimum division value is /2.
+This is only applicable if the Module Clock provided by the system (the normal
+default configuration and use case scenario) is not being used. In the case that
+the normal clock configured and programmed at system level is being used,
+there is not any type of constraints.
+One should not also confuse the usage of an external signal as clock for the
+module with the usage of an external signal for counting. These two features
+are completely unrelated and there are not any dependencies between both.
+
+
+                        Module clock                                                  CCU4/CCU8
+                      from the system
+
+                                          /1
+    Module External
+                                                                                  CC40/CC80
+                                          /2
+                                                             ...      Timer clock
+                                Prescaler      ...                     CC4/80PSC.PSIV
+
+
+       Signals
+                                     /16384
+                                     /32768
+                                                                                  CC41/CC81
+                                                             ...      Timer clock
+                                                                       CC4/81PSC.PSIV
+
+
+
+                                                                                  CC42/CC82
+                                                             ...      Timer clock
+                                                                       CC4/82PSC.PSIV
+
+
+
+                                                                                  CC43/CC83
+                                                             ...      Timer clock
+                                                                       CC4/83PSC.PSIV
+
+
+
+
+Figure 8              Clock Selection Diagram for CCU4/CCU8
+
+
+XMC4100/XMC4200, ES-BA, BA                           25/64                               Rel. 1.3, 2018-07
+                             Subject to Agreement on the Use of Product Information
+                                                                              Errata Sheet
+                                                                       Functional Deviations
+
+Workaround
+None.
+
+
+CCU_AI.006 Value update not usable in period dither mode
+
+Each CCU4/CCU8 timer gives the possibility of enabling a dither function, that
+can be applied to the duty cycle and/or period. The duty cycle dither is done to
+increase the resolution of the PWM duty cycle over time. The period dither is
+done to increase the resolution of the PWM switching frequency over time.
+Each of the dither configurations is set via the DITHE field:
+•   DITHE = 00B - dither disabled
+•   DITHE = 01B - dither applied to the period (period value)
+•   DITHE = 10B - dither applied to the duty-cycle (compare value)
+•   DITHE = 11B - dither applied to the duty-cycle and period (compare an
+    period value)
+Whenever the dither function is applied to the period (DITHE = 10B or DITHE =
+11B) and an update of the period value is done via a shadow transfer, the timer
+can enter a stuck-at condition (stuck at 0).
+
+Implication
+Period value update via shadow transfer cannot be used if dither function is
+applied to the period (DITHE programmed to 10B or 11B).
+
+Workaround
+None.
+
+
+CCU_AI.008 Clock ratio limitation when using MCSS inputs
+
+The MCSS input signals of CCU8 and CCU4 units are erroneously sampled
+with the AHB bus clock fPERIPH instead of the module clock fCCU.
+
+
+
+
+XMC4100/XMC4200, ES-BA, BA                 26/64                              Rel. 1.3, 2018-07
+                    Subject to Agreement on the Use of Product Information
+                                                                              Errata Sheet
+                                                                       Functional Deviations
+
+Implication
+If the fPERIPH and fCCU frequencies are programmed to a ratio different from 1:1
+then the MCSS signals running from POSIF to CCU4/CCU8 are not correctly
+sampled by CCU8/CCU4.
+This can for example affect brushless DC motor drive applications when a clock
+ratio different from 1:1 is required.
+
+Workaround
+None
+
+
+CPU_CM.001 Interrupted loads to SP can cause erroneous behavior
+
+If an interrupt occurs during the data-phase of a single word load to the stack-
+pointer (SP/R13), erroneous behavior can occur. In all cases, returning from the
+interrupt will result in the load instruction being executed an additional time. For
+all instructions performing an update to the base register, the base register will
+be erroneously updated on each execution, resulting in the stack-pointer being
+loaded from an incorrect memory location.The affected instructions that can
+result in the load transaction being repeated are:
+1.   LDR SP,[Rn],#imm
+2.   LDR SP,[Rn,#imm]!
+3.   LDR SP,[Rn,#imm]
+4.   LDR SP,[Rn]
+5.   LDR SP,[Rn,Rm]
+The affected instructions that can result in the stack-pointer being loaded from
+an incorrect memory address are:
+1. LDR SP,[Rn],#imm
+2. LDR SP,[Rn,#imm]!
+
+Conditions
+1. An LDR is executed, with SP/R13 as the destination
+2. The address for the LDR is successfully issued to the memory system
+3. An interrupt is taken before the data has been returned and written to the
+   stack-pointer.
+XMC4100/XMC4200, ES-BA, BA                 27/64                              Rel. 1.3, 2018-07
+                    Subject to Agreement on the Use of Product Information
+                                                                              Errata Sheet
+                                                                       Functional Deviations
+
+Implications
+Unless the load is being performed to Device or Strongly-Ordered memory,
+there should be no implications from the repetition of the load. In the unlikely
+event that the load is being performed to Device or Strongly-Ordered memory,
+the repeated read can result in the final stack-pointer value being different than
+had only a single load been performed.
+Interruption of the two write-back forms of the instruction can result in both the
+base register value and final stack-pointer value being incorrect. This can result
+in apparent stack corruption and subsequent unintended modification of
+memory.
+
+Workaround
+Both issues may be worked around by replacing the direct load to the stack-
+pointer, with an intermediate load to a general-purpose register followed by a
+move to the stack-pointer.
+If repeated reads are acceptable, then the base-update issue may be worked
+around by performing the stack pointer load without the base increment
+followed by a subsequent ADD or SUB instruction to perform the appropriate
+update to the base register.
+
+
+CPU_CM.004 VDIV or VSQRT instructions might not complete correctly
+when very short ISRs are used
+
+The VDIV and VSQRT instructions take 14 cycles to execute. When an interrupt
+is taken a VDIV or VSQRT instruction is not terminated, and completes its
+execution while the interrupt stacking occurs. If lazy context save of floating
+point state is enabled then the automatic stacking of the floating point context
+does not occur until a floating point instruction is executed inside the interrupt
+service routine.
+Lazy context save is enabled by default. When it is enabled, the minimum time
+for the first instruction in the interrupt service routine to start executing is 12
+cycles. In certain timing conditions, and if there is only one or two instructions
+inside the interrupt service routine, then the VDIV or VSQRT instruction might
+not write its result to the register bank or to the FPSCR.
+
+XMC4100/XMC4200, ES-BA, BA                 28/64                              Rel. 1.3, 2018-07
+                    Subject to Agreement on the Use of Product Information
+                                                                              Errata Sheet
+                                                                       Functional Deviations
+
+Conditions
+1. The floating point unit is present and enabled
+2. Lazy context saving is not disabled
+3. A VDIV or VSQRT is executed
+4. The destination register for the VDIV or VSQRT is one of s0 - s15
+5. An interrupt occurs and is taken
+6. The interrupt service routine being executed does not contain a floating
+   point instruction
+7. 14 cycles after the VDIV or VSQRT is executed, an interrupt return is
+   executed
+A minimum of 12 of these 14 cycles are utilized for the context state stacking,
+which leaves 2 cycles for instructions inside the interrupt service routine, or 2
+wait states applied to the entire stacking sequence (which means that it is not a
+constant wait state for every access).In general this means that if the memory
+system inserts wait states for stack transactions then this erratum cannot be
+observed.
+
+Implications
+The VDIV or VQSRT instruction does not complete correctly and the register
+bank and FPSCR are not updated, meaning that these registers hold incorrect,
+out of date, data.
+
+Workaround
+A workaround is only required if the floating point unit is present and enabled.
+A workaround is not required if the memory system inserts one or more wait
+states to every stack transaction.
+There are two workarounds:
+1. Disable lazy context save of floating point state by clearing LSPEN to 0 (bit
+   30 of the FPCCR at address 0xE000EF34).
+2. Ensure that every interrupt service routine contains more than 2 instructions
+   in addition to the exception return instruction.
+
+
+
+
+XMC4100/XMC4200, ES-BA, BA                 29/64                              Rel. 1.3, 2018-07
+                    Subject to Agreement on the Use of Product Information
+                                                                               Errata Sheet
+                                                                        Functional Deviations
+
+CPU_CM.005 Store immediate overlapping exception return operation
+might vector to incorrect interrupt
+
+The Cortex-M4 includes a write buffer that permits execution to continue while
+a store is waiting on the bus. Under specific timing conditions, during an
+exception return while this buffer is still in use by a store instruction, a late
+change in selection of the next interrupt to be taken might result in there being
+a mismatch between the interrupt acknowledged by the interrupt controller and
+the vector fetched by the processor.
+This erratum only affects systems where writeable memory locations can
+exhibit more than one wait state. For the XMC4000 Family only devices with
+external memory controller (EBC) used in Application are affected. All internal
+memory use zero wait state access.
+
+Implications
+The processor should execute interrupt handler C, and on completion of
+handler C should execute the handler for B. If the conditions above are met,
+then this erratum results in the processor erroneously clearing the pending state
+of interrupt C, and then executing the handler for B twice. The first time the
+handler for B is executed it will be at interrupt C's priority level. If interrupt C is
+pended by a level-based interrupt which is cleared by C's handler then interrupt
+C will be pended again once the handler for B has completed and the handler
+for C will be executed.If interrupt C is level based, then this interrupt will
+eventually become re-pending and subsequently be handled. If interrupt C is a
+single pulse interrupt, then there is a possibility that this interrupt will be lost.
+
+Workaround
+For software not using the memory protection unit, this erratum can be worked
+around by setting DISDEFWBUF in the Auxiliary Control Register.
+In all other cases, the erratum can be avoided by ensuring a DSB occurs
+between the store and the BX instruction. For exception handlers written in C,
+this can be achieved by inserting the appropriate set of intrinsics or inline
+assembly just before the end of the interrupt function, for example:
+ARMCC:
+...
+
+XMC4100/XMC4200, ES-BA, BA                  30/64                              Rel. 1.3, 2018-07
+                     Subject to Agreement on the Use of Product Information
+                                                                              Errata Sheet
+                                                                       Functional Deviations
+
+__schedule_barrier();
+__asm{DSB};
+__schedule_barrier();
+}
+GCC:
+...
+__asm volatile ("dsb 0xf":::"memory");
+}
+
+
+DAC_CM.003 FIFO usage limitation in “Data Processing Mode”
+
+The reference manual describes in section X.2.1.2 of the DAC chapter that the
+FIFO “...is introduced to allow a longer request latency...”.
+“Data Processing Mode” is the only operation mode based on FIFO usage. For
+this mode it was intended that a service request is raised only if the FIFO runs
+into the empty state after a DAC trigger occured.
+In fact service request(s) occur after each DAC trigger. Additionally some
+service requests can be delayed. Due to this misbehaviour a reliable refill
+mechanism cannot be implemented.
+
+Implications
+Unexpectedly delayed and superfluous service requests from the DAC FIFO
+inhibit the implementation of useful refill mechanisms based on interrupt service
+routines or GPDMA service.
+
+Workaround
+None.
+
+
+DTS_CM.001 DTS offset calibration value limitations
+
+When using the value 7FH for offset calibration in DTSCON.OFFSET the Die
+Temperature Sensor may return invalid results in DTSSTAT.RESULT.
+
+
+
+XMC4100/XMC4200, ES-BA, BA                 31/64                              Rel. 1.3, 2018-07
+                    Subject to Agreement on the Use of Product Information
+                                                                              Errata Sheet
+                                                                       Functional Deviations
+
+Implication
+The value 7FH (equivalent to -1) for DTSCON.OFFSET cannot be used.
+
+Workaround
+If the application needs a small negative offset then 7EH (equivalent to -2) could
+be used.
+
+
+FCE_CM.001 Result value is wrong if read directly after last write
+
+If a result register RESm is read directly after the last write of input data to the
+corresponding IRm register then the calculated result is wrong.
+
+Workaround
+Insert a wait cycle between last write and result read.
+This can be accomplished by:
+•   reading the result twice or
+•   inserting a NOP instruction between last write and result read.
+
+
+LEDTS_AI.001 Delay in the update of FNCTL.PADT bit field
+
+The touch-sense pad turn (PADT) value is updated, not at the end of the touch-
+sense time slice (ColA), but one time slice later (Figure 9).
+
+
+
+
+XMC4100/XMC4200, ES-BA, BA                 32/64                              Rel. 1.3, 2018-07
+                    Subject to Agreement on the Use of Product Information
+                                                                                              Errata Sheet
+                                                                                      Functional Deviations
+
+
+                                            Time Frame
+
+                                LED slice     LED slice   Touch‐sense
+                                                             slice
+
+
+
+
+   Active Column     ColA        Col1          Col0          ColA       Col1   Col0   ColA   Col1       Col0
+
+
+
+   Current PADT
+                            0                                 1                        2                 3
+   update behavior
+
+
+   Expected PADT
+                      0                          1                              2                   3
+   update behavior
+
+Figure 9      PADT update behavior
+If the number of LED columns enabled is smaller than 2, the delay will affect the
+activation period of the current active pad. At the beginning of every new Col A,
+the value of the current PADT’s compare register is updated to the internal
+compare register. However, the delay causes the value of the previous PADT’s
+compare register is updated to the internal compare register instead. This
+means that the current active pad would be activated with the duration of the
+previous pad’s oscillation window (Figure 10). In addition to this, when no LEDs
+are enabled, pad turn 0 will prevail for one time slice longer before it gets
+updated (Figure 11).
+
+
+
+
+XMC4100/XMC4200, ES-BA, BA                                33/64                              Rel. 1.3, 2018-07
+                     Subject to Agreement on the Use of Product Information
+                                                                                                  Errata Sheet
+                                                                                      Functional Deviations
+
+
+                        Time Frame
+
+                      LED slice   Touch‐sense
+                                     slice
+
+
+
+
+ Active Column         Col0           ColA          Col0     ColA       Col0   ColA        Col0    ColA        Col0
+
+
+
+ Current PADT
+                         0                      1                   2                 3                   4
+ update behavior
+
+
+ Internal Compare
+                     CMP_LD0 CMP_TS0 CMP_LD0 CMP_TS1 CMP_LD0 CMP_TS2 CMP_LD0 CMP_TS3 CMP_LD0
+ Register
+
+Figure 10        Effect of delay on the update of Internal Compare Register
+                 with 1 LED column enabled
+
+                          Touch‐sense slice = Time frame
+
+
+
+
+  Active Column          ColA         ColA          ColA     ColA       ColA   ColA       ColA    ColA        ColA
+
+
+
+  Current PADT
+                                  0                  1        2          3      4          5       6           7
+  update behavior
+
+
+  Internal Compare
+                      CMP_TS0 CMP_TS1 CMP_TS2 CMP_TS3 CMP_TS4 CMP_TS5 CMP_TS6 CMP_TS7 CMP_TS0
+  Register
+
+Figure 11        Pad turn 0 prevails for one time slice longer when no LEDs are
+                 enabled
+If the number of LED columns enabled is 2 or more, the additional LED columns
+would provide some buffer time for the delay. So, at the start of a new touch-
+sense time slice, the update of PADT value would have taken place. Hence, the
+current active PADT compare register value is updated to the internal compare
+register (Figure 12).
+
+
+XMC4100/XMC4200, ES-BA, BA                                 34/64                                  Rel. 1.3, 2018-07
+                       Subject to Agreement on the Use of Product Information
+                                                                                                Errata Sheet
+                                                                                       Functional Deviations
+
+
+                                             Time Frame
+
+                                 LED slice     LED slice   Touch‐sense
+                                                               slice
+
+
+
+
+ Active Column        ColA        Col1          Col0          ColA       Col1   Col0     ColA    Col1     Col0
+
+
+
+ Current PADT
+                             0                                  1                         2                3
+ update behavior
+
+
+ Internal Compare
+                     CMP_TS0 CMP_LD1 CMP_LD0 CMP_TS1 CMP_LD1 CMP_LD0 CMP_TS2 CMP_LD1 CMP_LD0
+ Register
+
+Figure 12        Internal Compare Register updated with correct compare
+                 register value with 2 LED columns enabled
+
+Conditions
+This delay in PADT update can be seen in cases where hardware pad turn
+control mode (FNCTL.PADTSW = 0) is selected and the touch-sense function
+is enabled (GLOBCTL.TS_EN = 1).
+
+Workaround
+This section is divided to two parts. The first part will provide a guide on reading
+the value of the bit field FNCTL.PADT via software. The second part will provide
+some workarounds for ensuring that the CMP_TS[x] values are aligned to the
+current active pad turn.
+
+Workaround for reading PADT
+Due to the delay in the PADT update, the user would get the current active pad
+turn when PADT is read in the time frame interrupt. However, this PADT value
+read differs when read in a time slice interrupt. This depends on the number of
+LED columns enabled and the active function or LED column in the previous
+time slice (Table 8). The bit field FNCTL.FNCOL provides a way of interpreting
+the active function or LED column in the previous time slice.
+
+XMC4100/XMC4200, ES-BA, BA                                 35/64                                Rel. 1.3, 2018-07
+                       Subject to Agreement on the Use of Product Information
+                                                                              Errata Sheet
+                                                                      Functional Deviations
+
+
+Table 8      PADT value as read in the time slice interrupt
+No. of LED          Previous active          FNCTL.FNCOL               PADT value
+Columns             function / LED
+Enabled             column
+0-1                 Touch-sense or           110B or 111B              Previous active pad
+                    LED Col0                                           turn
+2-7                 Touch-sense or 110B or 111B                        Previous active pad
+                    first LED column                                   turn
+                    after touch-sense
+                   Second LED                101B to 000B              Current or next
+                   column after                                        active pad turn
+                   touch-sense
+                   onwards
+
+Workaround for aligning CMP_TSx
+One workaround is to use the software pad turn control. Then this issue can be
+avoided entirely because the pad turn update will have to be handled by
+software.
+However, it is still possible to work around this issue when using the hardware
+pad turn control. In the previous section, it is known that when the number of
+LED columns enabled is smaller than 2, the current active pad is activated with
+the oscillation window of the previous active pad. This means that the current
+active pad is activated with the value programmed in the bit field CMP_TS[x-1]
+instead of CMP_TS[x]. There are two possible software workarounds for this
+issue:
+1. At the end of the time frame interrupt service routine, software can prepare
+   for the next active pad turn by programming the CMP_TS[x-1] bit field with
+   the intended compare value for TSIN[x]. As an example, if the next active
+   pad is TSIN[2], program CMP_TS[1] with the compare value intended for
+   TSIN[2] (Figure 13).
+
+
+
+
+XMC4100/XMC4200, ES-BA, BA                36/64                              Rel. 1.3, 2018-07
+                   Subject to Agreement on the Use of Product Information
+                                                                                                                        Errata Sheet
+                                                                                                           Functional Deviations
+
+
+                        Time Frame
+
+
+
+
+Active Column      Col0          ColA             Col0        ColA             Col0        ColA             Col0       ColA              Col0
+
+
+
+
+PADT value read     0                      1                              2                          3                            4
+
+
+
+
+                                 Time Frame Interrupt          Time Frame Interrupt        Time Frame Interrupt         Time Frame Interrupt
+                                Next active pad = TSIN[2]    Next active pad = TSIN[3]   Next active pad = TSIN[4]    Next active pad = TSIN[5]
+                                Program CMP_TS1 with         Program CMP_TS2 with         Program CMP_TS3 with         Program CMP_TS4 with
+                               value intended for TSIN[2]   value intended for TSIN[3]   value intended for TSIN[4]   value intended for TSIN[5]
+
+
+
+Figure 13         Software workaround demonstration
+1. During the initialization phase, program the CMP_TS[x] bit fields with the
+   left-shift factored in. Example: CMP_TS[0] for TSIN[1], CMP_TS[1] for
+   TSIN[2], ... CMP[7] for TSIN[0].
+
+
+PORTS_CM.005 Different PORT register reset values after module reset
+
+The PORTS registers can be reset independent of the reset of the system with
+SCU_PRSET1.PPORTSRS. After such a module reset, some PORTS registers
+have a reset value different to the reset value that is documented in the
+Reference Manual.
+
+Table 9           PORTS registers reset values
+Register                                 Sytem reset value                                    Module reset value
+Pn_IOCR8                                 0000 0000H                                           2020 2020H1)
+                                                                     2)
+Pn_PDISC                                 XXXX XXXXH                                           0000 0000H
+Pn_PDR0                                  2222 2222H                                           0000 0000H
+Pn_PDR1                                  2222 2222H                                           0000 0000H
+1) Only in XMC4500 devices.
+2) Device and package dependent
+
+
+
+
+XMC4100/XMC4200, ES-BA, BA                                      37/64                                                 Rel. 1.3, 2018-07
+                              Subject to Agreement on the Use of Product Information
+                                                                               Errata Sheet
+                                                                        Functional Deviations
+
+Implications
+The different value in Pn_IOCR8 configures the respective port pins Pn.[11:8]
+as inverted inputs instead of direct inputs. User software in Priviledged Mode
+can reconfigure them as needed by the application.
+With the different value in Pn_PDISC of the digital ports the availability of digital
+pins in a device can no longer be verified via this register. Note that Pn_PDISC
+of pure digital ports is read-only; user software can’t write to them.
+The Pn_PDISC of the shared analog/digital port pins (P14 and P15)
+enables/disables the digital input path. After a system reset this path is
+disabled, after a module reset enabled. User software in Priviledged Mode can
+reconfigure them as needed by the application.
+The different value in the Pn_PDR registers configures output port pins with a
+“Strong-Sharp” output driver mode, as opposed to “Strong-Soft” driver mode
+after a system reset. This may result in a higher current consumption and more
+noise induced to the external system. User software in Priviledged Mode can
+reconfigure them as needed by the application.
+
+Workaround
+None.
+
+
+PORTS_CM.007 P14 and P15 cannot be used in boundary scan test
+
+P14 and P15 are analog ports with selectable digital input functionality. After
+reset the digital input functionality is disabled. Due to this the input value
+present at related pins is not visible inside the device.
+
+Implications
+The digital logic values present at package pins related to P14 and P15 cannot
+be captured in IEEE 1149.1 boundary scan test.
+
+Workaround
+None.
+
+
+
+XMC4100/XMC4200, ES-BA, BA                  38/64                              Rel. 1.3, 2018-07
+                     Subject to Agreement on the Use of Product Information
+                                                                                Errata Sheet
+                                                                         Functional Deviations
+
+POSIF_AI.001 Input Index signal from Rotary Encoder is not decoded
+when the length is 1/4 of the tick period
+
+Each POSIF module can be used as an input interface for a Rotary Encoder. It
+is possible to configure the POSIF module to decode 3 different signals: Phase
+A, Phase B (these two signals are 90° out of phase) and Index. The index signal
+is normally understood as the marker for the zero position of the motor Figure 1.
+
+
+
+
+       phase A                                       phase A
+
+       phase B                                       phase B
+        Index/                                       Index/
+        marker                                       marker
+
+
+Figure 14        Rotary Encoder outputs - Phase A, Phase B and Index
+There are several types of Rotary Encoder when it comes to length of the index
+signal:
+•   length equal or bigger than 1 tick period
+•   length equal or bigger than 1/2 tick period
+•   length equal or bigger than 1/4 tick period
+When the index signal is smaller than 1/2 of the tick period, the POSIF module
+is not able to decode this signal properly, Figure 2 - notice that the reference
+edge of the index generation in this figure is the falling of Phase B, nevertheless
+this is an example and depending on the encoder type, this edge may be one
+of the other three.
+Due to this fact it is not possible to use the POSIF to decode these type of
+signals (index with duration below 1/2 of the tick period).
+
+
+
+
+XMC4100/XMC4200, ES-BA, BA                   39/64                              Rel. 1.3, 2018-07
+                      Subject to Agreement on the Use of Product Information
+                                                                                               Errata Sheet
+                                                                                    Functional Deviations
+
+
+                                                       Tick period (Tp)
+
+
+    Phase A
+
+
+    Phase B
+
+
+     Index
+
+
+                                                       T i < ½ Tp
+Figure 15     Different index signal types
+
+Workaround
+To make usage of the Index signal, when the length of this signal is less than
+1/2 of the tick period, one should connect it directly to the specific counter/timer.
+This connection should be done at port level of the device (e.g. connecting the
+device port to the specific Timer/Counter(s)), Figure 3.
+
+
+                                      Phase A
+                                                                  Up or dow count    CCU4
+                                       Phase B         POSIF                         Timer/
+                                                                       Index
+                                                                                     counter
+                                        Index
+
+
+                                                 a)
+
+
+
+                                      Phase A
+                                                                  Up or dow count    CCU4
+                                      Phase B          POSIF                         Timer/
+                                                                                     counter
+                                       Index
+
+
+
+                                                 b)
+
+
+Figure 16     Index usage workaround - a) Non working solution; b)
+              Working solution
+
+
+
+
+XMC4100/XMC4200, ES-BA, BA                     40/64                                           Rel. 1.3, 2018-07
+                     Subject to Agreement on the Use of Product Information
+                                                                              Errata Sheet
+                                                                       Functional Deviations
+
+SCU_CM.006 Deep sleep entry with PLL power-down option generates
+SOSCWDGT and SVCOLCKT trap
+
+Entering the deep sleep mode with PLL power-down option (selected in
+DSLEEPCR register of SCU module) may result with system traps triggered by
+PLL watchdog (the SOSCWDGT trap) and/or loss-of-lock (the SVCOLCKT
+trap).
+
+Implications
+Occurrence of one of the enabled traps will result in an immediate wake-up from
+the deep sleep state, i.e. the deep sleep is effectively not entered.
+
+Workaround
+Disable SOSCWDGT and SVCOLCKT trap generation in TRAPDIS register of
+SCU before entering deep sleep mode with PLL power-down option selected.
+
+
+SCU_CM.015 Functionality of parity memory test function limited
+
+The device provides an interface to access the parity bits of the contained
+SRAM memories for test purpose. This feature is typically used by safety
+applications which must ensure that the parity mechanism is operational.
+The test interface is based on using SCU registers PMTPR, PMTSR and
+MCHKCON. By those registers it is possible to implant (write) user defined
+parity bits to selected memory cells. For checking of the parity value a read
+function is defined.
+Due to synchronization issues wrong results can be produced for the
+PMTPR.PRD read value.
+
+Implications
+The values read back by PMTPR.PRD can be incorrect. Therefore it is not
+possible to directly check the parity information. Testing for the correct function
+of the parity logic is still possible by directed activation of parity errors.
+
+
+
+
+XMC4100/XMC4200, ES-BA, BA                 41/64                              Rel. 1.3, 2018-07
+                    Subject to Agreement on the Use of Product Information
+                                                                              Errata Sheet
+                                                                       Functional Deviations
+
+Test of parity function
+It is possible to test the correct function of the parity logic of PSRAM, DSRAM,
+USIC, CAN and USB memories using the following scheme:
+1. Enable parity error generation and parity error trap generation using
+   registers PEEN and PETE
+2. Enable one target for parity test via registers PMTSR and MCHKCON
+3. Write parity value for memory test to register bit field PMTPR.PWR
+4. Write data value whose parity values conflicts with the parity value written in
+   step 3 to memory location (@address0)
+5. For PSRAM and DSRAM only: a 2nd write operation to another memory
+   location (@address1) is required to flush the write buffer from step 4
+6. Read back the content from the first memory location (@address0)
+7. Parity error and NMI trap occurrence is expected
+The NMI handler should check on the right content of the registers PEFLAG and
+TRAPSTAT and clear the related parity and NMI trap flags before returning.
+
+
+SCU_CM.021 Registering of service requests in SRRAW register can fail
+
+If a write to the service request clear register (SRCLR) occurs at the same time
+as one or multiple hardware request(s) then the hardware request(s) normally
+stored in SRRAW register is (are) lost.
+The hardware request(s) and the cleared request(s) must not match to make
+the error occur.
+
+Implications
+If affected hardware requests (see SRRAW column in Table 10) are used by
+the application then these may get lost. The Workaround should be
+implemented.
+
+Workaround
+The interrupt routine assigned to an affected request must
+•   service the request(s) flagged in the SRSTAT register
+•   clear the corresponding bit(s) in SRRAW register via SRCLR register
+
+
+XMC4100/XMC4200, ES-BA, BA                 42/64                              Rel. 1.3, 2018-07
+                    Subject to Agreement on the Use of Product Information
+                                                                              Errata Sheet
+                                                                       Functional Deviations
+
+•   check the primary request source information of all affected and used
+    service request sources and update the SRRAW via SRSET register
+    accordly.
+For checking of the primary request source please use information provided in
+Table 10. Example: if RTC bit RAWSTAT.RAI is set but SCU bit SRRAW.AI is
+not set then this request was lost. SRRAW should then be updated accordingly.
+
+Table 10     Request source and related SRRAW register bit field
+Request Source                                            SRRAW
+Module        Bit field                                   Bit field
+WDT           TIM counter value                           PRWARN
+RTC           RAWSTAT.RP*                                 PI
+RTC           RAWSTAT.RAI                                 AI
+DLR           OVRSTAT.LN*                                 DLROVR
+SCU           HDSTAT.ULPWDG                               ULP_WDG
+SCU           MIRRSTS.HDSET                               HDSET
+SCU           MIRRSTS.OSCSICTRL                           OSCSICTRL
+SCU           MIRRSTS.RTC_CTR                             RTC_CTR
+SCU           MIRRSTS.RTC_ATIM0                           RTC_ATIM0
+SCU           MIRRSTS.RTC_ATIM1                           RTC_ATIM1
+SCU           MIRRSTS.RTC_TIM0                            RTC_TIM0
+SCU           MIRRSTS.RTC_TIM1                            RTC_TIM1
+SCU           MIRRSTS.RMX                                 RMX
+
+
+STARTUP_CM.002 Bootstrap loader may fail for devices with reduced
+PSRAM size
+
+The internal UART and CAN bootstrap loader always copies the code to the
+beginning of the physical PSRAM. The Data Sheet defines derivatives with
+reduced PSRAM size. For such devices the physical start address is in an
+address range that is defined as “reserved”.
+Affected devices:
+
+XMC4100/XMC4200, ES-BA, BA                 43/64                              Rel. 1.3, 2018-07
+                    Subject to Agreement on the Use of Product Information
+                                                                             Errata Sheet
+                                                                      Functional Deviations
+
+All XMC4100 derivatives (8 Kbytes PSRAM).
+
+Implications
+In some cases the “bootstrap loaded” code, usually a flash loader used to
+load/update flash images, compiled and linked for such a target device may fail,
+especially if it references to code or data inside this code with absolute
+addresses. This is because the uploaded code is copied to a different address
+range than intended/defined by the compiler/locator.
+
+Workaround
+Compile and link the “bootstrap loaded” code/data for a target device with the
+full physical PSRAM size, by using the linker script or project settings of the
+used compiler tool.
+For XMC4100 derivatives compile for a XMC4200 with 16 Kbytes PSRAM.
+
+
+USB_CM.004 USB core is not able to detect resume or new session re-
+quest after PHY clock is stopped
+
+The control bit PCGCCTL.StopPclk is intended for the application to stop the
+PHY clock when USB is suspended, the session is not valid, or the device is
+disconnected.
+However, in the current implementation, it also disables wrongly the logic to
+detect the USB resume and Session Request Protocol (for USB core with OTG
+capability) signalling.
+
+Implications
+If the PHY clock is stopped by setting the bit StopPclk to 1 following a USB
+suspend or session end, the USB core is not able to detect resume or new
+session request. Detection is possible again only after the clock gating is
+removed by clearing the bit StopPclk to 0.
+
+
+
+
+XMC4100/XMC4200, ES-BA, BA                44/64                              Rel. 1.3, 2018-07
+                   Subject to Agreement on the Use of Product Information
+                                                                              Errata Sheet
+                                                                       Functional Deviations
+
+Workaround
+The PHY clock must not be stopped with the bit StopPclk for the cases where
+the application relies on the detection of resume or new session request to
+remove the clock gating.
+
+
+USIC_AI.008 SSC delay compensation feature cannot be used
+
+SSC master mode and complete closed loop delay compensation cannot be
+used. The bit DX1CR.DCEN should always be written with zero to disable the
+delay compensation.
+
+Workaround
+None.
+
+
+USIC_AI.010 Minimum and maximum supported word and frame length in
+multi-IO SSC modes
+
+The minimum and maximum supported word and frame length in multi-IO SSC
+modes are shown in the table below:
+
+Table 11
+Multi-IO SSC Modes Word Length (bits)                         Frame Length (bits)
+                       Minimum             Maximum            Minimum         Maximum
+Dual-SSC                4                  16                 4               64
+Quad-SSC                8                  16                 8               64
+
+Workaround
+If a frame length greater than 64 data bits is required, the generation of the
+master slave select signal by SSC should be disabled by PCR.MSLSEN.
+To generate the master slave select signal:
+•   Configure the same pin (containing the SELOx function) to general purpose
+    output function instead by writing 10000B to the pin’s input/output control
+    register (Pn_IOCRx.PCy); and
+XMC4100/XMC4200, ES-BA, BA                 45/64                              Rel. 1.3, 2018-07
+                    Subject to Agreement on the Use of Product Information
+                                                                              Errata Sheet
+                                                                       Functional Deviations
+
+•   Use software to control the output level to emulate the master slave select
+    signal
+This way, multiple frames of 64 data bits can be made to appear as a single
+much larger frame.
+
+
+USIC_AI.013 SCTR register bit fields DSM and HPCDIR are not shadowed
+with start of data word transfer
+
+The bit fields DSM and HPCDIR in register SCTR are not shadowed with the
+start of a data word transfer.
+
+Workaround
+If the transfer parameters controlled by these bit fields need to be changed for
+the next data word, they should be updated only after the current data word
+transfer is completed, as indicated by the transmit shift interrupt PSR.TSIF.
+
+
+USIC_AI.014 No serial transfer possible while running capture mode tim-
+er
+
+When the capture mode timer of the baud rate generator is enabled
+(BRG.TMEN = 1) to perform timing measurements, no serial transmission or
+reception can take place.
+
+Workaround
+None.
+
+
+USIC_AI.015 Wrong generation of FIFO standard transmit/receive buffer
+events when TBCTR.STBTEN/RBCTR.SRBTEN = 1
+
+Transmit FIFO buffer modes selected by TBCTR.STBTEN = 1 generates a
+standard transmit buffer event whenever TBUF is loaded with the FIFO data or
+there is a write to INxx register, except when TRBSR.TBFLVL = TBCTR.LIMIT.
+This is independent of TBCTR.LOF setting.
+
+
+XMC4100/XMC4200, ES-BA, BA                 46/64                              Rel. 1.3, 2018-07
+                    Subject to Agreement on the Use of Product Information
+                                                                              Errata Sheet
+                                                                       Functional Deviations
+
+Similarly, receive FIFO buffer modes selected by RBCTR.SRBTEN = 1
+generates a standard receive buffer event whenever data is read out from FIFO
+or received into the FIFO, except when TRBSR.RBFLVL = RBCTR.LIMIT. This
+is independent of RBCTR.LOF setting.
+Both cases result in the wrong generation of the standard transmit and receive
+buffer events and interrupts, if interrupts are enabled.
+
+Workaround
+Use only the modes with TBCTR.STBTEN and RBCTR.SRBTEN = 0.
+
+
+USIC_AI.016 Transmit parameters are updated during FIFO buffer bypass
+
+Transmit Control Information (TCI) can be transferred from the bypass structure
+to the USIC channel when a bypass data is loaded into TBUF. Depending on
+the setting of TCSR register bit fields, different transmit parameters are updated
+by TCI:
+•   When SELMD = 1, PCR.CTR[20:16] is updated by BYPCR.SELO
+    (applicable only in SSC mode)
+•   When WLEMD = 1, SCTR.WLE and TCSR.EOF are updated by
+    BYPCR.BWLE
+•   When FLEMD = 1, SCTR.FLE[4:0] is updated by BYPCR.BWLE
+•   When HPCMD = 1, SCTR.HPCDIR and SCTR.DSM are updated by BHPC
+•   When all of the xxMD bits are 0, no transmit parameters will be updated
+However in the current device, independent of the xxMD bits setting, the
+following are always updated by the TCI generated by the bypass structure,
+when TBUF is loaded with a bypass data:
+•   WLE, HPCDIR and DSM bits in SCTR register
+•   EOF and SOF bits in TCSR register
+•   PCR.CTR[20:16] (applicable only in SSC mode)
+
+Workaround
+The application must take into consideration the above behaviour when using
+FIFO buffer bypass.
+
+
+XMC4100/XMC4200, ES-BA, BA                 47/64                              Rel. 1.3, 2018-07
+                    Subject to Agreement on the Use of Product Information
+                                                                             Errata Sheet
+                                                                      Functional Deviations
+
+USIC_AI.017 Clock phase of data shift in SSC slave cannot be changed
+
+Setting PCR.SLPHSEL bit to 1 in SSC slave mode is intended to change the
+clock phase of the data shift such that reception of data bits is done on the
+leading SCLKIN clock edge and transmission on the other (trailing) edge.
+However, in the current implementation, the feature is not working.
+
+Workaround
+None.
+
+
+USIC_AI.018 Clearing PSR.MSLS bit immediately deasserts the SELOx
+output signal
+
+In SSC master mode, the transmission of a data frame can be stopped explicitly
+by clearing bit PSR.MSLS, which is achieved by writing a 1 to the related bit
+position in register PSCR.
+This write action immediately clears bit PSR.MSLS and will deassert the slave
+select output signal SELOx after finishing a currently running word transfer and
+respecting the slave select trailing delay (Ttd) and next-frame delay (Tnf).
+However in the current implementation, the running word transfer will also be
+immediately stopped and the SELOx deasserted following the slave select
+delays.
+If the write to register PSCR occurs during the duration of the slave select
+leading delay (Tld) before the start of a new word transmission, no data will be
+transmitted and the SELOx gets deasserted following Ttd and Tnf.
+
+Workaround
+There are two possible workarounds:
+•   Use alternative end-of-frame control mechanisms, for example, end-of-
+    frame indication with TSCR.EOF bit.
+•   Check that any running word transfer is completed (PSR.TSIF flag = 1)
+    before clearing bit PSR.MSLS.
+
+
+
+XMC4100/XMC4200, ES-BA, BA                48/64                              Rel. 1.3, 2018-07
+                   Subject to Agreement on the Use of Product Information
+                                                                             Errata Sheet
+                                                                      Functional Deviations
+
+USIC_AI.019 First data word received by IIC receiver triggers RIF instead
+of AIF
+
+When operating in IIC mode as a master or slave receiver, the first data word
+received following a start condition and address match triggers a receive event
+(indicated by PSR.RIF flag) instead of an alternate receive event (indicated by
+PSR.AIF flag).
+
+Workaround
+To determine if a received data word is the first word of a new frame, bit 9 of
+RBUF needs to be read:
+•   When RBUF[9] is 1, the first data word of a new frame is indicated;
+•   When RBUF[9] is 0, subsequent data words of the frame are indicated.
+
+
+USIC_AI.020 Handling unused DOUT lines in multi-IO SSC mode
+
+In multi-IO SSC mode, when the number of DOUT lines enabled through the bit
+field CCR.HPCEN is greater than the number of DOUT lines used as defined in
+the bit field SCTR.DSM, the unused DOUT lines output incorrect values instead
+of the passive data level defined by SCTR.PDL.
+
+Implications
+Unintended edges on the unused DOUT lines.
+
+Workaround
+To avoid unintended edges on the unused DOUT lines, it is recommended to
+use the exact number of DOUT lines as enabled by the hardware controlled
+interface during a multi-IO data transfer.
+
+
+WDT_CM.001 No overflow is generated for WUB default value
+
+The Window Watchdog Timer (WDT) does not generate an overflow event if the
+default counter value FFFFFFFFH is used in register WUB.
+
+
+XMC4100/XMC4200, ES-BA, BA                49/64                              Rel. 1.3, 2018-07
+                   Subject to Agreement on the Use of Product Information
+                                                                             Errata Sheet
+                                                                      Functional Deviations
+
+Implications
+Without an timer overflow no reset or pre-warning is requested. For other WUB
+values the WDT operates correctly and a reset or pre-warning is requested
+upon WDT overflow.
+
+Workaround
+Do not use FFFFFFFFH as counter value.
+
+
+
+
+XMC4100/XMC4200, ES-BA, BA                50/64                              Rel. 1.3, 2018-07
+                   Subject to Agreement on the Use of Product Information
+                                                                               Errata Sheet
+                                Deviations from Electrical- and Timing Specification
+
+3           Deviations from Electrical- and Timing
+            Specification
+The errata in this section describe deviations from the documented electrical-
+and timing specifications.
+
+
+ORC_CM.P001 Out-of-Range Comparator maximum switching level
+
+The maximum switching level of the Out-of-Range Comparator (ORC) can be
+slightly higher than specified in the data sheet.
+This parameter is also used as test condition for other ORC parameters. This
+leads to the modified parameter definitions as shown in the table below.
+
+Table 12    ORC Parameters
+Parameter              Symbol          Values           Unit Note / Test
+                                       Min      Typ Max      Condition
+DC Switching Level VODC CC             100 125         210      mV      VAIN ≥ VAREF + VODC
+Detection Delay of     tODD CC         50      –       450      mA      VAIN ≥ VAREF + 210
+a persistent                                                            mV
+Overvoltage
+Always detected        tOPDD CC        440 –           –        mA      VAIN ≥ VAREF + 210
+Overvoltage Pulse                                                       mV
+Never detected         tOPDD CC        –       –       45       mA      VAIN ≥ VAREF + 210
+Overvoltage Pulse                                                       mV
+
+
+POWER_CM.P003 Current consumption when executing from PSRAM
+
+The Data Sheet defines a typical current consumption for execution from
+PSRAM and Flash in sleep mode.
+Additional measurements have shown that the actual values can exceed the
+current values defined in the Data Sheet. The table below lists the updated
+values.
+
+
+XMC4100/XMC4200, ES-BA, BA                   51/64                            Rel. 1.3, 2018-07
+                     Subject to Agreement on the Use of Product Information
+                                                                               Errata Sheet
+                              Deviations from Electrical- and Timing Specification
+
+
+Table 13    Power Supply Parameters
+Parameter                    Symbol        Values                 Unit Note /Test
+                                           Min       Typ      Max      Condition
+Active supply current       IDDPA CC −              35       −        mA     80 / 80 / 80
+Code execution from                  −              29       −        mA     80 / 40 / 40
+RAM
+Flash in Sleep mode
+Frequency: fCPU / fPERIPH /
+fCCU in MHz
+
+
+POWER_CM.P004 Current consumption while PORST low can exceed
+specified value
+
+The Data Sheet defines a maximum current consumption while the device is
+held in reset via PORST, IDDP_PORST.
+Additional measurements have shown that the actual values can exceed the
+current values defined in the Data Sheet. The table below lists the updated
+values.
+
+Table 14    Power Supply Parameters
+Parameter                Symbol            Values                     Unit   Note / Test
+                                           Min      Typ      Max             Condition
+IDDP current at PORST IDDP_PORST           −        4.5     6.5       mA     VDDP = 3.3 V,
+Low                      CC                                                  TA = 25 °C
+                                           −        10      35        mA     VDDP = 3.6 V,
+                                                                             TJ = 150 °C
+
+
+
+
+XMC4100/XMC4200, ES-BA, BA                52/64                               Rel. 1.3, 2018-07
+                   Subject to Agreement on the Use of Product Information
+                                                                                Errata Sheet
+                                                                             Application Hints
+
+4            Application Hints
+The errata in this section describe application hints which must be regarded to
+ensure correct operation under specific application conditions.
+
+
+ADC_AI.H003 Injected conversion may be performed with sample time of
+aborted conversion
+
+For specific timing conditions and configuration parameters, a higher prioritized
+conversion ci (including a synchronized request from another ADC kernel) in
+cancel-inject-repeat mode may erroneously be performed with the sample time
+parameters of the lower prioritized cancelled conversion cc. This can lead to
+wrong sample results (depending on the source impedance), and may also shift
+the starting point of following conversions.
+The conditions for this behavior are as follows (all 3 conditions must be met):
+1. Sample Time setting: injected conversion ci and cancelled conversion cc
+   use different sample time settings, i.e. bit fields STC* in the corresponding
+   Input Class Registers for cc and for ci (GxICLASS0/1, GLOBICLASS0/1)
+   are programmed to different values.
+2. Timing condition: conversion ci starts during the first fADCI clock cycle of the
+   sample phase of cc.
+3. Configuration parameters: the ratio between the analog clock fADCI and
+   the arbiter speed is as follows:
+             NA > ND*(NAR+3),
+   with
+   a) NA = ratio fADC/fADCI (NA = 2 .. 32, as defined in bit field DIVA),
+   b) ND = ratio fADC/fADCD = number of fADC clock cycles per arbitration slot
+      (ND = 1 .. 4, as defined in bit field DIVD),
+   c) NAR = number of arbitration slots per arbitration round (NAR = 4, 8, 16, or
+      20, as defined in bit field GxARBCFG.ARBRND).
+Bit fields DIVA and DIVD mentioned above are located in register GLOBCFG.
+As can be seen from the formula above, a problem typically only occurs when
+the arbiter is running at maximum speed, and a divider NA > 7 is selected to
+obtain fADCI.
+
+
+XMC4100/XMC4200, ES-BA, BA                 53/64                               Rel. 1.3, 2018-07
+                    Subject to Agreement on the Use of Product Information
+                                                                                Errata Sheet
+                                                                             Application Hints
+
+Recommendation 1
+Select the same sample time for injected conversions ci and potentially
+cancelled conversions cc, i.e. program all bit fields STC* in the corresponding
+Input Class Registers for cc and for ci (GxICLASS0/1, GLOBICLASS0/1) to
+the same value.
+
+Recommendation 2
+Select the parameters in register GLOBCFG and GxARBCFG according to the
+following relation:
+    NA ≤ ND*(NAR+3).
+
+
+ADC_AI.H004 Completion of Startup Calibration
+
+Before using the VADC the startup calibration must be completed.
+The calibration is started by setting GLOBCFG.SUCAL. The active phase of the
+calibration is indicated by GxARBCFG.CAL = 1. Completion of the calibration is
+indicated by GxARBCFG.CAL = 0.
+When checking for bit CAL = 1 immediately after setting bit SUCAL, bit CAL
+might not yet be set by hardware. As a consequence the active calibration
+phase may not be detected by software.The software may use the following
+sequence for startup calibration:
+1. GLOBCFG.SUCAL = 1
+2. Wait for GxARBCFG.CAL = 1
+3. Check for GxARBCFG.CAL = 0 before starting a conversion
+Make sure that steps 1 and 2 of this sequence are not interrupted to avoid a
+deadlock situation with waiting for GxARBCFG.CAL = 1.
+
+
+ADC_AI.H008 Injected conversion with broken wire detection
+
+If a higher prioritized injected conversion ci (in cancel-inject-repeat mode) using
+the broken wire detection feature (GxCHCTRy.BWDEN = 1B) interrupts a lower
+prioritized conversion cc before start of the conversion phase of cc, the following
+
+
+
+XMC4100/XMC4200, ES-BA, BA                 54/64                               Rel. 1.3, 2018-07
+                    Subject to Agreement on the Use of Product Information
+                                                                                Errata Sheet
+                                                                             Application Hints
+
+effects will occur for the injected conversion ci (independent of the
+recommendations in ADC_AI.H003):
+1. The effective sample time is either doubled, or it is equal to the sample time
+   of the lower prioritized cancelled conversion cc. This will shift the starting
+   point of following conversions, and may lead to wrong sample results if the
+   sample time for cc is considerably shorter than the programmed sample time
+   for ci (depending on the source impedance).
+2. The preparation phase for ci may be skipped, i.e. during the effective sample
+   phase (as described above), the selected channel is sampled without
+   precharging the capacitor network to the level selected for the broken wire
+   detection. Depending on the synchronization between ci and cc, this may
+   increase the time until a broken connection is detected.
+The interrupted conversion cc will be correctly restarted after completion of the
+injected conversion ci.
+
+Recommendation
+Perform injected conversions without enabling the broken wire detection
+feature, and follow the recommendations given in ADC_AI.H003.
+Alternatively, configure the trigger source that includes channels using the
+broken wire detection feature such that it will not cancel other conversions. This
+can be achieved by setting the priority of the request source s to the lowest
+priority (GxARBPR.PRIOs = 00B), or by setting the conversion start mode to
+“wait-for-start mode” (GxARBPR.CSMs = 0B).
+
+
+ADC_TC.H011 Bit DCMSB in register GLOBCFG
+
+The default setting for bit DCMSB (Double Clock for the MSB Conversion) in
+register GLOBCFG is 0B, i.e. one clock cycle for the MSB conversion step is
+selected.
+DCMSB = 1B is reserved in future documentation and must not be used.
+
+
+LEDTS_AI.H001 Column A is unavailable
+
+Column A is not connected to any port pin in this device.
+XMC4100/XMC4200, ES-BA, BA                 55/64                               Rel. 1.3, 2018-07
+                    Subject to Agreement on the Use of Product Information
+                                                                                Errata Sheet
+                                                                             Application Hints
+
+Implication
+Related module use cases are restricted.
+
+Recommendation
+When using touch-sense function, the option to use external pull resistor is
+unavailable. Register bit FNCTL.EPULL should always be configured with the
+value of 0.
+If only LED function is used, one time slice will have to be used as dummy
+(active column with no LEDs or touch pads connected) because Column A is
+unavailable. A minimum of 2 LED columns will have to be configured
+(FNCTL.NR_LEDCOL = 001B).
+If both LED and touch-sense functions are enabled, there is no impact on LED
+columns and it is possible to configure 1 LED column (FNCTL.NR_LEDCOL =
+000B) only.
+
+
+MultiCAN_AI.H005 TxD Pulse upon short disable request
+
+If a CAN disable request is set and then canceled in a very short time (one bit
+time or less) then a dominant transmit pulse may be generated by MultiCAN
+module, even if the CAN bus is in the idle state.
+Example for setup of the CAN disable request:
+CAN_CLC.DISR = 1 and then CAN_CLC.DISR = 0
+
+Workaround
+Set all INIT bits to 1 before requesting module disable.
+
+
+MultiCAN_AI.H006 Time stamp influenced by resynchronization
+
+The time stamp measurement feature is not based on an absolute time
+measurement, but on actual CAN bit times which are subject to the CAN
+resynchronization during CAN bus operation.The time stamp value merely
+indicates the number of elapsed actual bit times. Those actual bit times can be
+
+
+XMC4100/XMC4200, ES-BA, BA                 56/64                               Rel. 1.3, 2018-07
+                    Subject to Agreement on the Use of Product Information
+                                                                               Errata Sheet
+                                                                            Application Hints
+
+shorter or longer than nominal bit time length due to the CAN resynchronization
+events.
+
+Workaround
+None.
+
+
+MultiCAN_AI.H007 Alert Interrupt Behavior in case of Bus-Off
+
+The MultiCAN module shows the following behavior in case of a bus-off status:
+
+
+
+                           REC=0x1,                 REC=0x60,                  REC=0x0,
+    TEC=0x60 or
+                           TEC=0x1                   TEC=0x1                   TEC=0x0
+     REC=0x60
+                            BOFF                   EWRN+BOFF                    ALERT
+      EWRN
+                             INIT                      INIT                      INIT
+
+
+Figure 17    Alert Interrupt Behavior in case of Bus-Off
+When the threshold for error warning (EWRN) is reached (default value of Error
+Warning Level EWRN = 0x60), then the EWRN interrupt is issued. The bus-off
+(BOFF) status is reached if TEC > 255 according to CAN specification,
+changing the MultiCAN module with REC and TEC to the same value 0x1,
+setting the INIT bit to 1B, and issuing the BOFF interrupt. The bus-off recovery
+phase starts automatically. Every time an idle time is seen, REC is incremented.
+If REC = 0x60, a combined status EWRN+BOFF is reached. The corresponding
+interrupt can also be seen as a pre-warning interrupt, that the bus-off recovery
+phase will be finished soon. When the bus-off recovery phase has finished (128
+times idle time have been seen on the bus), EWRN and BOFF are cleared, the
+ALERT interrupt bit is set and the INIT bit is still set.
+
+
+MultiCAN_AI.H008 Effect of CANDIS on SUSACK
+
+When a CAN node is disabled by setting bit NCR.CANDIS = 1B, the node waits
+for the bus idle state and then sets bit NSR.SUSACK = 1B.
+
+
+XMC4100/XMC4200, ES-BA, BA                57/64                               Rel. 1.3, 2018-07
+                   Subject to Agreement on the Use of Product Information
+                                                                               Errata Sheet
+                                                                            Application Hints
+
+However, SUSACK has no effect on applications, as its original intention is to
+have an indication that the suspend mode of the node is reached during
+debugging.
+
+
+MultiCAN_AI.H009 Behavior of MSGVAL for Remote Frames in Single
+Data Transfer Mode - Documentation Update
+
+In Single Data Transfer Mode (SDT = 1B), bit MSGVAL is automatically cleared
+after transmission/reception of a Remote Frame.
+The corresponding sections of MultiCAN sub-chapter “Single Data Transfer
+Mode” of the User’s Manual are copied below, with text updates marked in
+bold:
+
+Message Reception
+When a received message stored in a message object is overwritten by a new
+received message, the contents of the first message are lost and replaced with
+the contents of the new received message (indicated by MSGLST = 1B).
+If SDT is set (Single Data Transfer Mode activated), bit MSGVAL of the
+message object is automatically cleared by hardware after the storage of a
+received Data or Remote Frame. This prevents the reception of further
+messages.
+
+Message Transmission
+When a message object receives a series of multiple remote requests, it
+transmits several Data Frames in response to the remote requests. If the data
+within the message object has not been updated in the time between the
+transmissions, the same data can be sent more than once on the CAN bus.
+In Single Data Transfer Mode (SDT = 1B), this is avoided because MSGVAL is
+automatically cleared after the successful transmission of a Data or Remote
+Frame.
+
+
+
+
+XMC4100/XMC4200, ES-BA, BA                58/64                               Rel. 1.3, 2018-07
+                   Subject to Agreement on the Use of Product Information
+                                                                                Errata Sheet
+                                                                             Application Hints
+
+MultiCAN_TC.H003 Message may be discarded before transmission in
+STT mode
+
+If MOFCRn.STT=1 (Single Transmit Trial enabled), bit TXRQ is cleared
+(TXRQ=0) as soon as the message object has been selected for transmission
+and, in case of error, no retransmission takes places.
+Therefore, if the error occurs between the selection for transmission and the
+real start of frame transmission, the message is actually never sent.
+
+Workaround
+In case the transmission shall be guaranteed, it is not suitable to use the STT
+mode. In this case, MOFCRn.STT shall be 0.
+
+
+MultiCAN_TC.H004 Double remote request
+
+Assume the following scenario: A first remote frame (dedicated to a message
+object) has been received. It performs a transmit setup (TXRQ is set) with
+clearing NEWDAT. MultiCAN starts to send the receiver message object (data
+frame), but loses arbitration against a second remote request received by the
+same message object as the first one (NEWDAT will be set).
+When the appropriate message object (data frame) triggered by the first remote
+frame wins the arbitration, it will be sent out and NEWDAT is not reset. This leads
+to an additional data frame, that will be sent by this message object (clearing
+NEWDAT).
+There will, however, not be more data frames than there are corresponding
+remote requests.
+
+
+
+
+XMC4100/XMC4200, ES-BA, BA                 59/64                               Rel. 1.3, 2018-07
+                    Subject to Agreement on the Use of Product Information
+                                                                                                    Errata Sheet
+                                                                                            Application Hints
+
+
+
+                 r e m o te                     r e m o te                    d a ta                     d a ta
+  C AN Bus       re q u e s t                   re q u e s t
+
+
+
+                                              lo s s o f
+                                           a rb itra tio n
+
+                                               d a ta                          d a ta                    d a ta
+  M u ltiC A N                  s e tu p                        s e tu p                 s e tu p
+                                              o b je c t                      o b je c t                o b je c t
+
+                                 c le a r                    c le a r s e t              c le a r
+                                NEW DAT                        NEW DAT                  NEW DAT
+                                 by H W                           by H W                 by H W
+
+Figure 18        Loss of Arbitration
+
+
+RESET_CM.H001 Power-on reset release
+
+The on-chip EVR implements a power validation circuitry which supervises
+VDDP and VDDC. This circuit releases or asserts the system reset to ensure safe
+operation. This reset is visible on bidirectional PORST pin. If the PORST
+release requirement cannot be met due to external circuitry then spikes or
+toggling on the PORST pin may occur.
+
+Implications
+Spikes or repeated PORST assertions may have an effect on the rest of the
+system if the reset signal is shared with other electronic components on the
+PCB.
+A repeated PORST may also result in loss of information about hibernation
+status after an interrupted wake-up has been performed.
+
+Recommendation
+It is required to ensure a fast rising edge of the PORST signal as specified in
+section “Power-Up and Supply Monitoring” of the Data Sheet. The
+recommended approach is to apply a pull-up resistor on the PORST pin.
+Typically a 10 - 90 kΩ resistor is sufficient in application cases where the device
+is in control of the reset generation performed by its internal power validation
+
+XMC4100/XMC4200, ES-BA, BA                           60/64                                          Rel. 1.3, 2018-07
+                          Subject to Agreement on the Use of Product Information
+                                                                               Errata Sheet
+                                                                            Application Hints
+
+circuit and no additional load is applied to the PORST pin. The required pull-up
+resistor value may vary depending on the electrical parameters of the system
+influencing the signal edges of the PORST signal; for example resistance and
+capacitance of the PCB and other components connected to the PORST pin.
+
+
+USIC_AI.H004 I2C slave transmitter recovery from deadlock situation
+
+While operating the USIC channel as an IIC slave transmitter, if the slave runs
+out of data to transmit before the master receiver issues clock pulses, for
+example due to an error in the application flow, it ties the SCL infinitely low.
+
+Recommendation
+To recover and reinitialize the USIC IIC slave from such a deadlock situation,
+the following software sequence can be used:
+1. Switch the SCL and SDA port functions to be general port inputs for the
+   slave to release the SCL and SDA lines:
+   a) Write 0 to the two affected Pn_IOCRx.PCy bit fields.
+2. Flush the FIFO buffer:
+   a) Write 1B to both USICx_CHy_TRBSCR.FLUSHTB and FLUSHRB bits.
+3. Invalidate the internal transmit buffer TBUF:
+   a) Write 10B to USICx_CHy_FMR.MTDV.
+4. Clear all status bits and reinitialize the IIC USIC channel if necessary.
+5. Reprogram the Pn_IOCRx.PCy bit fields to select the SCL and SDA port
+   functions again.
+At the end of this sequence, the IIC slave is ready to communicate with the IIC
+master again.
+
+
+
+
+XMC4100/XMC4200, ES-BA, BA                61/64                               Rel. 1.3, 2018-07
+                   Subject to Agreement on the Use of Product Information
+                                                                            Errata Sheet
+                                                                   Documentation Updates
+
+5            Documentation Updates
+The errata in this section contain updates to or completions of the user
+documentation. These updates are subject to be taken over into upcoming user
+documentation releases.
+
+
+MPU_CM.D001        No restrictions on using Bit5 to Bit8 of register
+MPU_RBAR
+
+The XMC4000 reference manuals describe, Bit5 to Bit8 of register MPU_RBAR
+are read-only and fixed to 0.
+The ARM documentation for the Cortex-M4 processors specifies these bits are
+used to extend the LSBs to set the region base address and size.
+
+Implications
+The reference manual is limiting the range of possible base addresses and
+region sizes for memory protection.
+
+Workaround
+Use the ARM documentation set for ARM Cortex-M4 processor for reference.
+
+
+STARTUP_CM.D003 Alignment of ABM/PSRAM Header
+
+The reference manual is specifying PSRAM/ABM Header of 32 byte size. Only
+for 20byte of these 32 bytes the functionality is defined. The remaining 12bytes
+are reserved. Inside the chapter for Startup modes of the reference manual only
+the functional bytes are specified but not the location of the reserved bytes.
+The following figure provides a detailed view on the location of the reserved
+bytes:
+
+
+
+
+XMC4100/XMC4200, ES-BA, BA                62/64                             Rel. 1.3, 2018-07
+                   Subject to Agreement on the Use of Product Information
+                                                                                                                Errata Sheet
+                                                                                               Documentation Updates
+
+
+
+
+                64kB physical sector
+
+
+
+                                                              Reserved (3 x 32 bits)
+                                                    CRC-32 code for ABM/PSRAM header(32bits)
+                                                       CRC-32 for application length(32bits)          ABM
+                                       32 Bytes
+                                                                                                     Header
+                                                            Application length (32bits)
+                                                          Start address of code (32 bits)
+                                                                Magic Key (32 bits)
+
+
+
+
+                64kB physical sector
+
+
+
+
+                                                                 Application
+
+
+
+                                                          Interrupt Vector Table
+
+                                                         Application Reset Vector
+                                                               Stack Pointer                      Flash Start
+
+
+
+
+Figure 19   ABM/PSRAM Header - Location of reserved bytes
+
+
+WDT_CM.D001 Correction to section "Pre-warning Mode"
+
+Section “Pre-warning Mode” of WDT chapter in the Reference Manual states
+the following:
+"… The alarm status is shown via register WDTSTS and can be cleared via
+register WDTCLR. A clear of the alarm status will bring the WDT back to normal
+
+
+XMC4100/XMC4200, ES-BA, BA                                       63/64                                          Rel. 1.3, 2018-07
+                                       Subject to Agreement on the Use of Product Information
+                                                                            Errata Sheet
+                                                                   Documentation Updates
+
+state. The alarm signal is routed as request to the SCU, where it can be
+promoted to NMI. …"
+
+Correction
+The statement "A clear of the alarm status will bring the WDT back to normal
+state" is wrong.
+A clear of the alarm status bit via write to WDTCLR.ALMC will clear only the bit
+WDSTSTS.ALMS.
+To transfer the WDT back to the normal state a WDT service request is
+required.
+
+
+
+
+XMC4100/XMC4200, ES-BA, BA                64/64                             Rel. 1.3, 2018-07
+                   Subject to Agreement on the Use of Product Information
+
