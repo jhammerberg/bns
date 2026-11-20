@@ -30,3 +30,10 @@ void hub75_draw_char(char character, int32_t x, int32_t y, hub75_color_t foregro
         }
     }
 }
+
+void hub75_draw_text(const char *text, int32_t x, int32_t y, hub75_color_t foreground, hub75_color_t background) {
+    while (*text) {
+        hub75_draw_char(*text++, x, y, foreground, background);
+        x += HUB75_CHAR_WIDTH;
+    }
+}

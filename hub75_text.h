@@ -51,4 +51,7 @@ void hub75_draw_char(char character, int32_t x, int32_t y,
 }
 #endif
 
+void hub75_draw_text(const char *text, int32_t x, int32_t y,
+                     hub75_color_t foreground, hub75_color_t background);
+
 #endif // HUB75_TEXT_H
