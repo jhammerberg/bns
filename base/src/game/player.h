@@ -5,6 +5,8 @@
 #include "spells.h"
 
 #define MANA_REGEN_RATE 5
+#define MAX_HEALTH 100
+#define MAX_MANA 100
 
 struct Player {
     int id;

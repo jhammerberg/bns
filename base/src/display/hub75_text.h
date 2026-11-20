@@ -54,4 +54,22 @@ void hub75_draw_char(char character, int32_t x, int32_t y,
 void hub75_draw_text(const char *text, int32_t x, int32_t y,
                      hub75_color_t foreground, hub75_color_t background);
 
+/*
+ * Small 3x5 font, drawn in a 4x6 box (one column and one row of spacing).
+ * Move x by 4 for the next character and y by 6 for the next line.
+ * Uppercase only: lowercase letters draw as uppercase. Supports ASCII
+ * 0x20..0x5F plus the arrows 0x18..0x1B; anything else draws '?'.
+ * Like the big font, it paints the whole box, background included.
+ */
+#define HUB75_SMALL_GLYPH_WIDTH  3U
+#define HUB75_SMALL_GLYPH_HEIGHT 5U
+#define HUB75_SMALL_CHAR_WIDTH   4U
+#define HUB75_SMALL_CHAR_HEIGHT  6U
+
+void hub75_draw_char_small(char character, int32_t x, int32_t y,
+                           hub75_color_t foreground, hub75_color_t background);
+
+void hub75_draw_text_small(const char *text, int32_t x, int32_t y,
+                           hub75_color_t foreground, hub75_color_t background);
+
 #endif // HUB75_TEXT_H

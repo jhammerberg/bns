@@ -1,0 +1,6 @@
+menu "BNS wand"
+    config BNS_WAND_ID
+        int "Wand ID (1 or 2)"
+        range 1 2
+        default 1
+endmenu

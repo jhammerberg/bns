@@ -42,7 +42,7 @@ TARGET=APP_KIT_XMC47_RELAX_V1
 #
 # If APPNAME is edited, ensure to update or regenerate launch
 # configurations for your IDE.
-APPNAME=mtb-example-xmc-empty-app
+APPNAME=bns-base
 
 # Name of toolchain to use. Options include:
 #
@@ -94,7 +94,7 @@ SOURCES=
 
 # Like SOURCES, but for include directories. Value should be paths to
 # directories (without a leading -I).
-INCLUDES=
+INCLUDES=../common
 
 # Add additional defines to the build process (without a leading -D).
 DEFINES=
@@ -171,7 +171,8 @@ CY_WIN_HOME=$(subst \,/,$(USERPROFILE))
 CY_TOOLS_PATHS ?= $(wildcard \
     $(CY_WIN_HOME)/ModusToolbox/tools_* \
     $(HOME)/ModusToolbox/tools_* \
-    /Applications/ModusToolbox/tools_*)
+    /Applications/ModusToolbox/tools_* \
+    $(HOME)/Applications/ModusToolbox/tools_*)
 
 # If you install ModusToolbox IDE in a custom location, add the path to its
 # "tools_X.Y" folder (where X and Y are the version number of the tools

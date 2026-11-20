@@ -148,3 +148,23 @@ Thumbs.db:encryptable
 ehthumbs.db
 ehthumbs_vista.db
 [Dd]esktop.ini
+
+# ---- generated / per-machine files: never commit ----
+# ModusToolbox: shared libs (make getlibs), query cache, AI-extension session,
+# VS Code workspace (regenerate with `make vscode` in base/)
+mtb_shared/
+.mtbqueryapi
+.modustoolbox/
+*.code-workspace
+
+# Editors / language servers
+.cache/
+.DS_Store
+__pycache__/
+
+# ESP-IDF
+esp/*/build/
+esp/*/sdkconfig
+esp/*/sdkconfig.old
+esp/*/managed_components/
+esp/*/dependencies.lock

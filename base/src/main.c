@@ -40,6 +40,8 @@
 #include "cybsp.h"
 #include "hub75.h"
 #include "imu.h"
+#include "game_assets.h"
+#include "game.h"
 
 int _write(int file, char *ptr, int len)
 {
@@ -59,27 +61,50 @@ int main(void){
     }
     SystemCoreClockUpdate();
 
-    if (!imu_init(0x28)) {
-        for (;;) {}
-    }
+    // if (!imu_init(0x28)) {
+    //     for (;;) {}
+    // }
 
-    imu_sample_t sample;
-    for (;;) {
-        if (imu_read(&sample)) {
-            printf("Accel: %.2f, %.2f, %.2f\n", sample.accel.x, sample.accel.y, sample.accel.z);
-            // XMC_Delay(100);
-        }
-    }
+    // imu_sample_t sample;
+    // for (;;) {
+    //     if (imu_read(&sample)) {
+    //         printf("Accel: %.2f, %.2f, %.2f\n", sample.accel.x, sample.accel.y, sample.accel.z);
+    //         // XMC_Delay(100);
+    //     }
+    // }
 
     
     if (hub75_init(SystemCoreClock) != HUB75_OK) {
         for (;;) { }  // Initialization errors leave OE HIGH (blank).
     }
         hub75_clear();
-        hub75_fill_rect(2, 2, 60, 6, HUB75_WHITE); // Health-bar background.
-        hub75_fill_rect(2, 2, 44, 6, HUB75_RED);   // Current health.
-        hub75_fill_rect(2, 12, 30, 6, HUB75_BLUE); // Mana bar.
-        hub75_set_pixel(32, 32, HUB75_YELLOW);
+        // hub75_fill_rect(2, 2, 60, 6, HUB75_WHITE); // Health-bar background.
+        // hub75_fill_rect(2, 2, 44, 6, HUB75_RED);   // Current health.
+        // hub75_fill_rect(2, 12, 30, 6, HUB75_BLUE); // Mana bar.
+        // hub75_set_pixel(32, 32, HUB75_YELLOW);
+
+        // struct Player p;
+        // p.health = 100;
+
+        // Spell fire = SPELLS[0];
+        // Spell shock = SPELLS[1];
+        // Spell shield = SPELLS[2];
+        // Spell fort = SPELLS[3];
+        // Spell heal = SPELLS[4];
+
+        // draw_health_bar(50);
+        // draw_mana_bar(100);
+        // draw_shield_bar(10, 30, false);
+
+        // draw_spell_info();
+
+        // draw_opponent_health_bar(100);
+        // // draw_opponent_mana_bar(50);
+        // draw_opponent_shield_bar(10, 10, true);
+
+        // draw_enemy_name();
+
+        draw_victory_screen(true);
     for (;;) {
         hub75_refresh();   // REQUIRED continuously, even for a still image.
         // Short, nonblocking input/game work may go here.
