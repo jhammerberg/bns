@@ -9,9 +9,13 @@ XMC4700 base driving two HUB75 panels.
   esp/wand/   XIAO ESP32-C6 in each wand (C, ESP-IDF)
   esp/receiver/  XIAO ESP32-C6 at the base (C, ESP-IDF)
   common/     protocol.h, shared by base and esp
+  sim/        virtual 64x64 / 128x64 panels running the real base firmware
   reference/  datasheets
 
 Build:
+
+- sim:  cd sim && make run [PANELS=2]   live in terminal; sim/out/frame.png
+        make shot SECONDS=2               headless run, then exit
 
 - base: cd base && make getlibs && make build   (make program to flash)
   If ModusToolbox is not in a default location, set CY_TOOLS_PATHS.

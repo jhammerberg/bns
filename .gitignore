@@ -168,3 +168,7 @@ esp/*/sdkconfig
 esp/*/sdkconfig.old
 esp/*/managed_components/
 esp/*/dependencies.lock
+
+# Simulator output
+sim/build/
+sim/out/

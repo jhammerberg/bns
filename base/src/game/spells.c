@@ -55,4 +55,4 @@ const struct Spell SPELLS[] = {
     }
 };
 
-#define NUM_SPELLS (sizeof(SPELLS) / sizeof(SPELLS[0]))
+const size_t NUM_SPELLS = sizeof(SPELLS) / sizeof(SPELLS[0]);
