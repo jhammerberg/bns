@@ -38,8 +38,20 @@
 extern "C" {
 #endif
 
+// Size of ONE panel. Drawing coordinates are always 0..63 within the
+// selected panel (see hub75_select_panel).
 #define HUB75_WIDTH  64U
 #define HUB75_HEIGHT 64U
+
+// Panels daisy-chained on the one HUB75 output. Panel 0's columns are
+// shifted out first, so they travel through to the panel at the FAR end of
+// the chain; the last panel number is the one plugged into the XMC.
+// (Not yet checked on hardware: if the two images come out swapped, swap them.)
+// Override with -DHUB75_PANELS=2 once the second panel is chained.
+#ifndef HUB75_PANELS
+#define HUB75_PANELS 1U
+#endif
+#define HUB75_CHAIN_WIDTH (HUB75_WIDTH * HUB75_PANELS)
 
 typedef enum {
     HUB75_BLACK   = 0,
@@ -63,10 +75,14 @@ typedef enum {
 // calling this again clears anything already drawn
 hub75_status_t hub75_init(uint32_t cpu_hz);
 
-// clear the image to black, then keep refreshing
+// choose which chained panel the drawing calls below affect (default 0)
+// out-of-range panel numbers are ignored
+void hub75_select_panel(uint32_t panel);
+
+// clear the selected panel to black, then keep refreshing
 void hub75_clear(void);
 
-// fill the buffer with one color. Still need to refresh afterward
+// fill the selected panel with one color. Still need to refresh afterward
 void hub75_fill(hub75_color_t color);
 
 // set one pixel, ignoring coordinates outside the screen

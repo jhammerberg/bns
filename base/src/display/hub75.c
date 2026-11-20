@@ -1,6 +1,8 @@
-// pixel buffer and scanning for the 64x64 panel
+// scanning the framebuffer out to the chained 64x64 panels (XMC only)
+// drawing into the framebuffer lives in hub75_fb.c
 
 #include "hub75.h"
+#include "hub75_fb.h"
 #include "xmc_gpio.h"
 #include <stdbool.h>
 
@@ -22,15 +24,8 @@
 #define HALF_CLOCK_US  UINT32_C(1)
 #define ROW_ON_US      UINT32_C(20)
 
-// one byte per pixel: bit 0 = red, bit 1 = green, bit 2 = blue
-// 4096 bytes total. Update pixels between refresh calls
-static uint8_t framebuffer[HUB75_HEIGHT][HUB75_WIDTH];
 static uint32_t ticks_per_us;
 static bool initialized;
-
-static uint8_t color_bits(hub75_color_t color) {
-    return (uint8_t)((uint32_t)color & UINT32_C(7));
-}
 
 // wait until enough CPU cycles have passed. Interrupts can still run here
 // unsigned subtraction handles the counter wrapping during the wait
@@ -75,13 +70,15 @@ static void shift_column(uint8_t upper_rgb, uint8_t lower_rgb) {
 }
 
 // row n is paired with row n+32
-// should see 64 clocks, then a latch pulse. OE low turns the LEDs on
+// should see 64 clocks per panel, then a latch pulse. OE low turns the LEDs on
 static void scan_row(uint32_t row) {
     // turn the LEDs off while loading the next row
     RGB_PORT->OMR = OE_MASK;
 
-    for (uint32_t x = 0; x < HUB75_WIDTH; ++x) {
-        shift_column(framebuffer[row][x], framebuffer[row + ROW_PAIRS][x]);
+    // send the whole chain in increasing column order: panel 0's data goes
+    // first and ends up in the far panel (see HUB75_PANELS in hub75.h)
+    for (uint32_t x = 0; x < HUB75_CHAIN_WIDTH; ++x) {
+        shift_column(hub75_framebuffer[row][x], hub75_framebuffer[row + ROW_PAIRS][x]);
     }
 
     // latch the loaded pixels, then set the row address
@@ -110,7 +107,7 @@ hub75_status_t hub75_init(uint32_t cpu_hz) {
     for (uint8_t pin = 0; pin < 5; ++pin) {
         init_output(ADDR_PORT, pin, XMC_GPIO_OUTPUT_LEVEL_LOW);
     }
-    hub75_clear();
+    hub75_fb_reset();
 
     // check that the clock argument is reasonable
     // this does not measure it, so pass the updated SystemCoreClock value
@@ -136,68 +133,6 @@ hub75_status_t hub75_init(uint32_t cpu_hz) {
 
     initialized = true;
     return HUB75_OK;
-}
-
-void hub75_clear(void) {
-    hub75_fill(HUB75_BLACK);
-}
-
-void hub75_fill(hub75_color_t color) {
-    const uint8_t value = color_bits(color);
-    for (uint32_t y = 0; y < HUB75_HEIGHT; ++y) {
-        for (uint32_t x = 0; x < HUB75_WIDTH; ++x) {
-            framebuffer[y][x] = value;
-        }
-    }
-}
-
-void hub75_set_pixel(int32_t x, int32_t y, hub75_color_t color) {
-    if (x < 0 || y < 0 || (uint32_t)x >= HUB75_WIDTH || (uint32_t)y >= HUB75_HEIGHT) {
-        return;
-    }
-    framebuffer[y][x] = color_bits(color);
-}
-
-hub75_color_t hub75_get_pixel(int32_t x, int32_t y) {
-    if (x < 0 || y < 0 || (uint32_t)x >= HUB75_WIDTH || (uint32_t)y >= HUB75_HEIGHT) {
-        return HUB75_BLACK;
-    }
-    return (hub75_color_t)framebuffer[y][x];
-}
-
-void hub75_fill_rect(int32_t x, int32_t y, int32_t width, int32_t height, hub75_color_t color) {
-    if (width <= 0 || height <= 0) {
-        return;
-    }
-
-    // use 64 bits here so large coordinates do not overflow before clipping
-    int64_t left = x;
-    int64_t top = y;
-    int64_t right = left + (int64_t)width;
-    int64_t bottom = top + (int64_t)height;
-
-    if (right <= 0 || bottom <= 0 || left >= HUB75_WIDTH || top >= HUB75_HEIGHT) {
-        return;
-    }
-    if (left < 0) {
-        left = 0;
-    }
-    if (top < 0) {
-        top = 0;
-    }
-    if (right > HUB75_WIDTH) {
-        right = HUB75_WIDTH;
-    }
-    if (bottom > HUB75_HEIGHT) {
-        bottom = HUB75_HEIGHT;
-    }
-
-    const uint8_t value = color_bits(color);
-    for (uint32_t py = (uint32_t)top; py < (uint32_t)bottom; ++py) {
-        for (uint32_t px = (uint32_t)left; px < (uint32_t)right; ++px) {
-            framebuffer[py][px] = value;
-        }
-    }
 }
 
 void hub75_refresh(void) {
