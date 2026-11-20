@@ -36,14 +36,42 @@
 * DEALINGS IN THE SOFTWARE.
 *                                                                              
 *****************************************************************************/
- #include "cybsp.h"
- #include "hub75.h"
+#include <stdio.h>
+#include "cybsp.h"
+#include "hub75.h"
+#include "imu.h"
+
+int _write(int file, char *ptr, int len)
+{
+   (void)file;
+   for (int i = 0; i < len; i++){
+       if (ptr[i] == '\n'){
+           XMC_UART_CH_Transmit(CYBSP_DEBUG_UART_HW, '\r');
+       }
+       XMC_UART_CH_Transmit(CYBSP_DEBUG_UART_HW, ptr[i]);
+   }
+   return len;
+}
 
 int main(void){
     if (cybsp_init() != CY_RSLT_SUCCESS) {
         for (;;) { }
     }
     SystemCoreClockUpdate();
+
+    if (!imu_init(0x28)) {
+        for (;;) {}
+    }
+
+    imu_sample_t sample;
+    for (;;) {
+        if (imu_read(&sample)) {
+            printf("Accel: %.2f, %.2f, %.2f\n", sample.accel.x, sample.accel.y, sample.accel.z);
+            // XMC_Delay(100);
+        }
+    }
+
+    /*
     if (hub75_init(SystemCoreClock) != HUB75_OK) {
         for (;;) { }  // Initialization errors leave OE HIGH (blank).
     }
@@ -56,5 +84,6 @@ int main(void){
         hub75_refresh();   // REQUIRED continuously, even for a still image.
         // Short, nonblocking input/game work may go here.
     }
+    */
 }
 /* [] END OF FILE */
