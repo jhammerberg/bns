@@ -2,7 +2,6 @@
 
 const struct Spell SPELLS[] = {
     {
-        .spellName = "FIRE",
         .type = ATTACK,
         .manaCost = 10,
         .healthEffect = -10,
@@ -11,7 +10,6 @@ const struct Spell SPELLS[] = {
         .symbol = &SPRITE_FIRE
     },
     {
-        .spellName = "SHOCK",
         .type = ATTACK,
         .manaCost = 20,
         .healthEffect = -25,
@@ -20,7 +18,6 @@ const struct Spell SPELLS[] = {
         .symbol = &SPRITE_LIGHTNING
     },
     {
-        .spellName = "SHIELD",
         .type = SHIELD,
         .manaCost = 15,
         .healthEffect = 0,
@@ -29,7 +26,6 @@ const struct Spell SPELLS[] = {
         .symbol = &SPRITE_SHIELD
     },
     {
-        .spellName = "HEAL",
         .type = HEAL,
         .manaCost = 20,
         .healthEffect = 20,

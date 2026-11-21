@@ -71,9 +71,6 @@ void hub75_fill(hub75_color_t color);
 // set one pixel, ignoring coordinates outside the screen
 void hub75_set_pixel(int32_t x, int32_t y, hub75_color_t color);
 
-// read the stored color. Returns black if the pixel is off-screen
-hub75_color_t hub75_get_pixel(int32_t x, int32_t y);
-
 // fill a rectangle from (x,y), clipping any part outside the screen
 // x/y can be negative. Width or height <= 0 does nothing
 void hub75_fill_rect(int32_t x, int32_t y, int32_t width, int32_t height, hub75_color_t color);

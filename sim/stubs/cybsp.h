@@ -19,6 +19,4 @@ typedef struct { int unused; } XMC_USIC_CH_t;
 // debug UART: bytes go to the sim's UART log
 void XMC_UART_CH_Transmit(XMC_USIC_CH_t *channel, uint16_t data);
 
-void XMC_Delay(uint32_t ms);
-
 #endif // SIM_CYBSP_H

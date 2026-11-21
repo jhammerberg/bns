@@ -11,8 +11,8 @@ SRC_DIR := ../base/src
 
 # all firmware sources except the XMC-only ones: main.c is pulled in via
 # firmware_main.c, hub75.c and timer.c are replaced by hub75_sim.c, input.c
-# by input_sim.c (keyboard), imu.c needs real I2C
-FW_SRCS := $(filter-out $(SRC_DIR)/main.c $(SRC_DIR)/imu.c $(SRC_DIR)/display/hub75.c \
+# by input_sim.c (keyboard)
+FW_SRCS := $(filter-out $(SRC_DIR)/main.c $(SRC_DIR)/display/hub75.c \
              $(SRC_DIR)/timer.c $(SRC_DIR)/input.c, \
              $(wildcard $(SRC_DIR)/*.c $(SRC_DIR)/*/*.c))
 SIM_SRCS := sim.c hub75_sim.c input_sim.c render.c firmware_main.c

@@ -1,7 +1,6 @@
 #include "spells.h"
 #include <stdbool.h>
 #include <stdlib.h>
-#include <stdio.h>
 #include "player.h"
 
 cast_result_t castSpell(struct Player *player, struct Spell spell) {
@@ -16,7 +15,6 @@ cast_result_t castSpell(struct Player *player, struct Spell spell) {
     if(spell.type == SHIELD) {
         player->shieldActive = true;
         player->shieldHealth = spell.shieldHealth;
-        player->maxShieldHealth = spell.shieldHealth;
     } else if(spell.type == HEAL) {
         player->health += spell.healthEffect;
         if(player->health > MAX_HEALTH) {
@@ -67,6 +65,3 @@ cast_result_t castShape(struct Player *player, struct Player *opponent, bns_shap
     return result;
 }
 
-void registerReset(struct Player *player, volatile bool reset) {
-    player->reset = reset;
-}

@@ -116,10 +116,6 @@ cy_rslt_t cybsp_init(void) {
     return CY_RSLT_SUCCESS;
 }
 
-void XMC_Delay(uint32_t ms) {
-    sleep_us((uint64_t)ms * 1000u);
-}
-
 // ---- base/src/timer.h (the real one uses the XMC SysTick) ----
 
 static uint64_t timer_start_us;

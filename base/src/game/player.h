@@ -17,13 +17,10 @@ typedef enum {
 } cast_result_t;
 
 struct Player {
-    int id;
     int health;
     int mana;
     bool shieldActive;
     int shieldHealth;
-    int maxShieldHealth;
-    volatile bool reset; // volatile: set from the reset button interrupt
 
     // last spell attempt, for the HUD's cast card (NULL: none yet)
     const struct Spell *lastCast;
@@ -37,7 +34,5 @@ void receiveSpell(struct Player *player, struct Spell spell);
 // attacks hit `opponent`. Records the attempt in player->lastCast* for the HUD.
 cast_result_t castShape(struct Player *player, struct Player *opponent, bns_shape_t shape,
                         uint32_t now_ms);
-
-void registerReset(struct Player *player, bool reset);
 
 #endif // PLAYER_H

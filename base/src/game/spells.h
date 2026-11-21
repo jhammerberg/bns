@@ -12,7 +12,6 @@ enum spellType {
 };
 
 typedef struct Spell {
-    char* spellName;
     enum spellType type;
     int manaCost;
     int healthEffect;

@@ -57,13 +57,6 @@ void hub75_set_pixel(int32_t x, int32_t y, hub75_color_t color) {
     (*hub75_back)[y][panel_x0 + (uint32_t)x] = color_bits(color);
 }
 
-hub75_color_t hub75_get_pixel(int32_t x, int32_t y) {
-    if (x < 0 || y < 0 || (uint32_t)x >= HUB75_WIDTH || (uint32_t)y >= HUB75_HEIGHT) {
-        return HUB75_BLACK;
-    }
-    return (hub75_color_t)(*hub75_back)[y][panel_x0 + (uint32_t)x];
-}
-
 void hub75_fill_rect(int32_t x, int32_t y, int32_t width, int32_t height, hub75_color_t color) {
     if (width <= 0 || height <= 0) {
         return;
