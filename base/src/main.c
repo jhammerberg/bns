@@ -41,7 +41,7 @@
 #include "hub75.h"
 #include "hub75_text.h"
 #include "imu.h"
-#include "game_assets.h"
+#include "hud.h"
 #include "game.h"
 #include "timer.h"
 

@@ -27,17 +27,6 @@ typedef enum {
     BNS_SHAPE_COUNT
 } bns_shape_t;
 
-/* Directional input from the old arrow-combo design. Not sent over the radio
- * any more; kept because base/src/game/spells.c still checks enum inputs
- * against it. Matches enum inputs in base/src/game/spells.h. */
-typedef enum {
-    BNS_DIR_UP    = 0,
-    BNS_DIR_RIGHT = 1,
-    BNS_DIR_DOWN  = 2,
-    BNS_DIR_LEFT  = 3,
-    BNS_DIR_NONE  = 4
-} bns_direction_t;
-
 typedef struct __attribute__((packed)) {
     uint8_t version;   /* BNS_PROTOCOL_VERSION */
     uint8_t wand_id;   /* 1 or 2 */

@@ -2,27 +2,30 @@
 #include "hub75.h"
 #include "hub75_text.h"
 #include "game.h"
-#include "game_assets.h"
+#include "hud.h"
 #include "timer.h"
+#include "input.h"
 
 
 void start_game(struct Player *player1, struct Player *player2) {
     player1->health = 100;
     player1->mana = 100;
-    player1->inputCount = 0;
     player1->shieldActive = false;
     player1->shieldHealth = 0;
     player1->maxShieldHealth = 0;
+    player1->lastCast = NULL;
 
     player2->health = 100;
     player2->mana = 100;
-    player2->inputCount = 0;
     player2->shieldActive = false;
     player2->shieldHealth = 0;
     player2->maxShieldHealth = 0;
+    player2->lastCast = NULL;
 
     // start countdown timer for game start
-    countdown();
+    if(GAME_COUNTDOWN) {
+        countdown();
+    }
 
     run_game(player1, player2);
 
@@ -59,46 +62,68 @@ void countdown() {
 
 
 
-void end_game(int winner, struct Player *player1, struct Player *player2) {
-    // Display end game screen
-    if(winner == 2) {
-        hub75_draw_text("Player 2 Wins!", 0, 0, HUB75_RED, HUB75_BLACK);
-    } else {
-        hub75_draw_text("Player 1 Wins!", 0, 0, HUB75_GREEN, HUB75_BLACK);
+// Each player sees their own panel: player 1 on panel 0, player 2 on panel 1.
+// With a single panel only player 1's view is drawn.
+static void draw_views(void (*draw)(struct Player *, struct Player *),
+                       struct Player *player1, struct Player *player2) {
+    hub75_select_panel(0);
+    draw(player1, player2);
+    if(HUB75_PANELS > 1) {
+        hub75_select_panel(1);
+        draw(player2, player1);
+        hub75_select_panel(0);
     }
+}
 
-    while(1) {
-        // Wait for reset input from both players
-        if(player1->reset && player2->reset) {
-            // Reset the game
-            start_game(player1, player2);
-            break;
+static void draw_result(struct Player *player, struct Player *opponent) {
+    (void)opponent;
+    hub75_clear();
+    draw_victory_screen(player->health > 0);
+}
+
+void end_game(int winner, struct Player *player1, struct Player *player2) {
+    (void)winner; // each panel shows win/lose from its own player's health
+    draw_views(draw_result, player1, player2);
+
+    // Wait for reset input from both players, keeping the panels lit
+    while(!(player1->reset && player2->reset)) {
+        hub75_refresh();
+    }
+    start_game(player1, player2);
+}
+
+// Shapes from the wands: wand 1 is player 1, wand 2 is player 2.
+static void handle_input(struct Player *player1, struct Player *player2) {
+    bns_packet_t pkt;
+    while(input_poll(&pkt)) {
+        if(pkt.wand_id == 1) {
+            castShape(player1, player2, (bns_shape_t)pkt.shape);
+        } else if(pkt.wand_id == 2) {
+            castShape(player2, player1, (bns_shape_t)pkt.shape);
         }
     }
 }
 
-// maybe add inputs for controls?
 void run_game(struct Player *player1, struct Player *player2) {
-    hub75_clear();
+    for(uint32_t panel = 0; panel < HUB75_PANELS; panel++) {
+        hub75_select_panel(panel);
+        hub75_clear();
+    }
+    hub75_select_panel(0);
     uint32_t last_mana_regen = millis();
-    
+
     while(player1->health > 0 && player2->health > 0) {
-        // Game loop
-        // Handle player inputs and game logic here
+        handle_input(player1, player2);
 
         if(millis() - last_mana_regen >= 1000) {
             last_mana_regen = millis();
             player1->mana += player1->mana == MAX_MANA ? 0 : MANA_REGEN_RATE;
             player2->mana += player2->mana == MAX_MANA ? 0 : MANA_REGEN_RATE;
         }
-        
-        
 
-        draw_game(player1, player2);
+        draw_views(draw_game, player1, player2);
         hub75_refresh();
-    }       
-
-    
+    }
 
     if(player1->health <= 0) {
         end_game(2, player1, player2); // Player 2 wins
@@ -106,8 +131,3 @@ void run_game(struct Player *player1, struct Player *player2) {
         end_game(1, player1, player2); // Player 1 wins
     }
 }
-
-   
-
-
-

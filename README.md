@@ -14,7 +14,7 @@ XMC4700 base driving two HUB75 panels.
 
 Build:
 
-- sim:  cd sim && make run [PANELS=2]   live in terminal; sim/out/frame.png
+- sim:  just watch [2]   live in terminal, rebuilds on save; sim/out/frame.png
         make shot SECONDS=2               headless run, then exit
 
 - base: cd base && make getlibs && make build   (make program to flash)

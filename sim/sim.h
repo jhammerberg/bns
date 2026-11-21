@@ -15,6 +15,9 @@ typedef struct {
 // thread-safe copy of the current glass (called by the display loop)
 void sim_glass_read(sim_glass_t *out);
 
+// keyboard -> wand shapes (input_sim.c); returns false for unmapped keys
+bool sim_input_key(int key);
+
 // UART log: last few lines for the status area
 void sim_uart_tail(char *out, size_t n, int lines);
 

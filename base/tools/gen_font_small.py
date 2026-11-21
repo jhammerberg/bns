@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Generate font_small.h (3x5 pixel font) from the pixel art below.
 
-Edit a glyph here, then run:  python3 tools/gen_font_small.py > src/display/font_small.h   (from base/)
+Edit a glyph here, then run:  python3 tools/gen_font_small.py > src/assets/font_small.h   (from base/)
 Each glyph is 5 rows of 3 characters; '#' is a lit pixel.
 """
 
