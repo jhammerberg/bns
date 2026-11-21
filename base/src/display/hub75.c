@@ -24,6 +24,15 @@
 #define HALF_CLOCK_US  UINT32_C(1)
 #define ROW_ON_US      UINT32_C(20)
 
+// Pin edge speed. Strong/sharp is what works on the current wiring: soft
+// edges made the rows with address bit D (P0.3, an A2 pad) go missing
+// (docs/bug-log.md).
+// Note the same setting means different things per pad class (RM Table 26-6):
+// on A1+ pads (P0.0-1, P5.0-2, P5.7, P5.10) "sharp" is already strong-soft.
+#ifndef HUB75_PIN_STRENGTH
+#define HUB75_PIN_STRENGTH XMC_GPIO_OUTPUT_STRENGTH_STRONG_SHARP_EDGE
+#endif
+
 static uint32_t ticks_per_us;
 static bool initialized;
 
@@ -51,7 +60,7 @@ static void init_output(XMC_GPIO_PORT_t *port, uint8_t pin, XMC_GPIO_OUTPUT_LEVE
     const XMC_GPIO_CONFIG_t config = {
         .mode = XMC_GPIO_MODE_OUTPUT_PUSH_PULL,
         .output_level = level,
-        .output_strength = XMC_GPIO_OUTPUT_STRENGTH_STRONG_SHARP_EDGE
+        .output_strength = HUB75_PIN_STRENGTH
     };
     XMC_GPIO_Init(port, pin, &config);
 }
@@ -75,8 +84,8 @@ static void scan_row(uint32_t row) {
     // turn the LEDs off while loading the next row
     RGB_PORT->OMR = OE_MASK;
 
-    // send the whole chain in increasing column order: panel 0's data goes
-    // first and ends up in the far panel (see HUB75_PANELS in hub75.h)
+    // send the whole chain in framebuffer order: the first columns sent end up
+    // in the far panel (see HUB75_PANEL_COLUMN in hub75_fb.h)
     for (uint32_t x = 0; x < HUB75_CHAIN_WIDTH; ++x) {
         shift_column(hub75_framebuffer[row][x], hub75_framebuffer[row + ROW_PAIRS][x]);
     }

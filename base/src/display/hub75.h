@@ -43,11 +43,9 @@ extern "C" {
 #define HUB75_WIDTH  64U
 #define HUB75_HEIGHT 64U
 
-// Panels daisy-chained on the one HUB75 output. Panel 0's columns are
-// shifted out first, so they travel through to the panel at the FAR end of
-// the chain; the last panel number is the one plugged into the XMC.
-// (Not yet checked on hardware: if the two images come out swapped, swap them.)
-// Override with -DHUB75_PANELS=2 once the second panel is chained.
+// Panels daisy-chained on the one HUB75 output. Panel 0 is the one wired to
+// the XMC, panel 1 the next one along the chain (checked on hardware).
+// base/Makefile sets -DHUB75_PANELS=2.
 #ifndef HUB75_PANELS
 #define HUB75_PANELS 1U
 #endif

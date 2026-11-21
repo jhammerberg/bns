@@ -39,25 +39,24 @@ void reset_game(struct Player *player1, struct Player *player2) {
     } 
 }
 
-void countdown() {
-    // display countdown on screen
-    uint32_t start = millis();
-    draw_countdown_number('3');
+// Show one countdown digit on every panel for 1 s, keeping the panels lit.
+static void countdown_step(char digit) {
+    for(uint32_t panel = 0; panel < HUB75_PANELS; panel++) {
+        hub75_select_panel(panel);
+        hub75_clear();
+        draw_countdown_number(digit);
+    }
+    hub75_select_panel(0);
+    const uint32_t start = millis();
     while(millis() - start < 1000) {
         hub75_refresh();
     }
-    start = millis();
-    draw_countdown_number('2');
-    while(millis() - start < 1000) {
-        hub75_refresh();
-    }
+}
 
-    start = millis();
-    draw_countdown_number('1');
-    while(millis() - start < 1000) {
-        hub75_refresh();
-    }
-    return;
+void countdown() {
+    countdown_step('3');
+    countdown_step('2');
+    countdown_step('1');
 }
 
 

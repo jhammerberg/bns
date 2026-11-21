@@ -97,7 +97,7 @@ SOURCES=
 INCLUDES=../common
 
 # Add additional defines to the build process (without a leading -D).
-DEFINES=
+DEFINES=HUB75_PANELS=2 # two chained panels (see docs/base-wiring.html)
 
 # Select softfp or hardfp floating point. Default is softfp.
 VFP_SELECT=

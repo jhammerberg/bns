@@ -19,7 +19,7 @@
 #define DARK_AFTER_US 100000u
 
 static pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
-static uint8_t glass[HUB75_HEIGHT][HUB75_CHAIN_WIDTH];
+static uint8_t glass[HUB75_HEIGHT][HUB75_CHAIN_WIDTH]; // panel 0 first
 static uint64_t last_refresh_us;
 static bool blanked = true;
 static bool initialized;
@@ -54,7 +54,14 @@ void hub75_refresh(void) {
         return;
     }
     pthread_mutex_lock(&lock);
-    memcpy(glass, hub75_framebuffer, sizeof glass);
+    // framebuffer columns are in chain (shift) order; the glass is drawn left to
+    // right as panel 0, panel 1, ... so reorder each panel into place
+    for (uint32_t panel = 0; panel < HUB75_PANELS; ++panel) {
+        for (uint32_t y = 0; y < HUB75_HEIGHT; ++y) {
+            memcpy(&glass[y][panel * HUB75_WIDTH],
+                   &hub75_framebuffer[y][HUB75_PANEL_COLUMN(panel)], HUB75_WIDTH);
+        }
+    }
     const uint64_t now = sim_now_us();
     last_refresh_us = now;
     blanked = false;

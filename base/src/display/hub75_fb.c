@@ -13,7 +13,7 @@ static uint8_t color_bits(hub75_color_t color) {
 }
 
 void hub75_fb_reset(void) {
-    panel_x0 = 0;
+    panel_x0 = HUB75_PANEL_COLUMN(0);
     for (uint32_t y = 0; y < HUB75_HEIGHT; ++y) {
         for (uint32_t x = 0; x < HUB75_CHAIN_WIDTH; ++x) {
             hub75_framebuffer[y][x] = 0;
@@ -23,7 +23,7 @@ void hub75_fb_reset(void) {
 
 void hub75_select_panel(uint32_t panel) {
     if (panel < HUB75_PANELS) {
-        panel_x0 = panel * HUB75_WIDTH;
+        panel_x0 = HUB75_PANEL_COLUMN(panel);
     }
 }
 
