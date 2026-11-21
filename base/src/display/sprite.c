@@ -6,6 +6,8 @@
 #include <stdbool.h>
 #include <string.h>
 
+#define DIM 6 // brightness of the lowercase colours, out of 15
+
 // colour letter -> panel colour; returns false for transparent pixels
 static bool pixel_color(char c, hub75_color_t *out) {
     switch (c) {
@@ -16,6 +18,14 @@ static bool pixel_color(char c, hub75_color_t *out) {
     case 'C': *out = HUB75_CYAN; return true;
     case 'M': *out = HUB75_MAGENTA; return true;
     case 'W': *out = HUB75_WHITE; return true;
+    // lowercase: the same colour, dimmed
+    case 'r': *out = HUB75_RGB(DIM, 0, 0); return true;
+    case 'g': *out = HUB75_RGB(0, DIM, 0); return true;
+    case 'b': *out = HUB75_RGB(0, 0, DIM); return true;
+    case 'y': *out = HUB75_RGB(DIM, DIM, 0); return true;
+    case 'c': *out = HUB75_RGB(0, DIM, DIM); return true;
+    case 'm': *out = HUB75_RGB(DIM, 0, DIM); return true;
+    case 'w': *out = HUB75_RGB(DIM, DIM, DIM); return true;
     case ' ': return false;
     default:  *out = HUB75_BLACK; return true; // '.' and anything unknown
     }

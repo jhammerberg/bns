@@ -7,7 +7,7 @@
 
 // What the panels physically show: the last presented frame.
 typedef struct {
-    uint8_t px[HUB75_HEIGHT][HUB75_CHAIN_WIDTH];
+    hub75_color_t px[HUB75_HEIGHT][HUB75_CHAIN_WIDTH]; // RGB444
     bool lit;              // false before init or while blanked -> LEDs off
     bool stalled;          // game loop hasn't presented a frame for 100 ms
     uint32_t frames_per_s; // frames presented by the game loop

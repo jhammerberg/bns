@@ -6,14 +6,15 @@
 
 #undef printf // sim output goes to the real stdout, not the UART log
 
-static void led_rgb(uint8_t bits, bool lit, uint8_t rgb[3], uint8_t off) {
-    if (!lit || !bits) {
+// RGB444 pixel -> 24-bit colour (each 0..15 channel scaled to 0..255)
+static void led_rgb(hub75_color_t c, bool lit, uint8_t rgb[3], uint8_t off) {
+    if (!lit || !(c & 0x0FFF)) {
         rgb[0] = rgb[1] = rgb[2] = off; // unlit LED
         return;
     }
-    rgb[0] = (bits & 1) ? 255 : 0;
-    rgb[1] = (bits & 2) ? 255 : 0;
-    rgb[2] = (bits & 4) ? 255 : 0;
+    rgb[0] = (uint8_t)(((c >> 8) & 0xF) * 17);
+    rgb[1] = (uint8_t)(((c >> 4) & 0xF) * 17);
+    rgb[2] = (uint8_t)((c & 0xF) * 17);
 }
 
 // ---- terminal: two LEDs per character cell (upper-half block) ----

@@ -9,7 +9,7 @@
  * rate. After present the back buffer holds an old frame: redraw everything.
  *
  * x and y are 0..63 within the selected panel. Pixels outside are ignored,
- * rectangles are clipped. Colors use bits 0, 1, 2 for red, green, blue.
+ * rectangles are clipped. Colors are RGB444 (HUB75_RGB(r, g, b), 0..15 each).
  * Pass the CPU clock in Hz; delays use the DWT cycle counter.
  */
 
@@ -36,16 +36,20 @@ extern "C" {
 #endif
 #define HUB75_CHAIN_WIDTH (HUB75_WIDTH * HUB75_PANELS)
 
-typedef enum {
-    HUB75_BLACK   = 0,
-    HUB75_RED     = 1,
-    HUB75_GREEN   = 2,
-    HUB75_YELLOW  = 3,
-    HUB75_BLUE    = 4,
-    HUB75_MAGENTA = 5,
-    HUB75_CYAN    = 6,
-    HUB75_WHITE   = 7
-} hub75_color_t;
+// 12-bit RGB444 color: 4 bits (0..15) per channel, shown with 16 brightness
+// levels each (binary code modulation in hub75.c).
+typedef uint16_t hub75_color_t;
+#define HUB75_RGB(r, g, b) \
+    ((hub75_color_t)((((r) & 0xF) << 8) | (((g) & 0xF) << 4) | ((b) & 0xF)))
+
+#define HUB75_BLACK   HUB75_RGB(0, 0, 0)
+#define HUB75_RED     HUB75_RGB(15, 0, 0)
+#define HUB75_GREEN   HUB75_RGB(0, 15, 0)
+#define HUB75_YELLOW  HUB75_RGB(15, 15, 0)
+#define HUB75_BLUE    HUB75_RGB(0, 0, 15)
+#define HUB75_MAGENTA HUB75_RGB(15, 0, 15)
+#define HUB75_CYAN    HUB75_RGB(0, 15, 15)
+#define HUB75_WHITE   HUB75_RGB(15, 15, 15)
 
 typedef enum {
     HUB75_OK = 0,

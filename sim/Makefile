@@ -10,9 +10,9 @@ SECONDS ?= 2
 SRC_DIR := ../base/src
 
 # all firmware sources except the XMC-only ones: main.c is pulled in via
-# firmware_main.c, hub75.c and timer.c are replaced by hub75_sim.c, input.c
+# firmware_main.c, hub75.c/hub75_dma.c and timer.c are replaced by hub75_sim.c, input.c
 # by input_sim.c (keyboard)
-FW_SRCS := $(filter-out $(SRC_DIR)/main.c $(SRC_DIR)/display/hub75.c \
+FW_SRCS := $(filter-out $(SRC_DIR)/main.c $(SRC_DIR)/display/hub75.c $(SRC_DIR)/display/hub75_dma.c \
              $(SRC_DIR)/timer.c $(SRC_DIR)/input.c, \
              $(wildcard $(SRC_DIR)/*.c $(SRC_DIR)/*/*.c))
 SIM_SRCS := sim.c hub75_sim.c input_sim.c render.c firmware_main.c
@@ -38,7 +38,15 @@ $(BIN): $(SIM_SRCS) $(FW_SRCS) $(HEADERS)
 	@mkdir -p build
 	$(CC) $(CFLAGS) -o $@ $(SIM_SRCS) $(FW_SRCS)
 
+# laptop test of the display encoder (base/src/display/hub75_encode.c)
+test: build/test_encode
+	@./build/test_encode
+
+build/test_encode: test_encode.c $(SRC_DIR)/display/hub75_encode.c $(HEADERS)
+	@mkdir -p build
+	$(CC) -std=c11 -O1 -Wall -Wextra -DHUB75_PANELS=2 -I$(SRC_DIR)/display -o $@ test_encode.c $(SRC_DIR)/display/hub75_encode.c
+
 clean:
 	rm -rf build out
 
-.PHONY: run shot watch clean
+.PHONY: run shot watch test clean

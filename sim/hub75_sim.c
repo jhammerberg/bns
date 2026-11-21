@@ -20,7 +20,7 @@
 #define STALLED_AFTER_US 100000u
 
 static pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
-static uint8_t glass[HUB75_HEIGHT][HUB75_CHAIN_WIDTH]; // panel 0 first
+static hub75_color_t glass[HUB75_HEIGHT][HUB75_CHAIN_WIDTH]; // panel 0 first
 static uint64_t last_present_us, next_frame_us;
 static bool blanked;
 static bool initialized;
@@ -69,7 +69,8 @@ void hub75_present(void) {
     for (uint32_t panel = 0; panel < HUB75_PANELS; ++panel) {
         for (uint32_t y = 0; y < HUB75_HEIGHT; ++y) {
             memcpy(&glass[y][panel * HUB75_WIDTH],
-                   &(*hub75_front)[y][HUB75_PANEL_COLUMN(panel)], HUB75_WIDTH);
+                   &(*hub75_front)[y][HUB75_PANEL_COLUMN(panel)],
+                   HUB75_WIDTH * sizeof(hub75_color_t));
         }
     }
     const uint64_t t = sim_now_us();

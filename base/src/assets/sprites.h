@@ -3,6 +3,7 @@
 //
 // Format: one string per row, one character per pixel.
 //   R red   G green   B blue   Y yellow   C cyan   M magenta   W white
+//   r g b y c m w  the same colours, dimmed (about 40%)
 //   .  off (drawn black)      space  transparent (left as is)
 // Rows must all be the same length; at most SPRITE_MAX_ROWS rows.
 

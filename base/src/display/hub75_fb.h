@@ -8,10 +8,10 @@
 #include <stdint.h>
 #include "hub75.h"
 
-// one byte per pixel: bit 0 = red, bit 1 = green, bit 2 = blue
+// one RGB444 pixel per entry (hub75_color_t)
 // Columns are in shift order: the first 64 columns sent travel through to the
 // far end of the chain, so the panel wired to the XMC (panel 0) is last.
-typedef uint8_t hub75_frame_t[HUB75_HEIGHT][HUB75_CHAIN_WIDTH];
+typedef hub75_color_t hub75_frame_t[HUB75_HEIGHT][HUB75_CHAIN_WIDTH];
 
 // Double buffering: drawing goes into the back frame, the panels show the
 // front frame. hub75_fb_swap() exchanges them (at a frame boundary).

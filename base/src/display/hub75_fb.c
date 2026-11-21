@@ -20,8 +20,8 @@ void hub75_fb_swap(void) {
 // column where the selected panel starts in the chain
 static uint32_t panel_x0;
 
-static uint8_t color_bits(hub75_color_t color) {
-    return (uint8_t)((uint32_t)color & UINT32_C(7));
+static hub75_color_t color_bits(hub75_color_t color) {
+    return (hub75_color_t)(color & 0x0FFFU);
 }
 
 void hub75_fb_reset(void) {
@@ -46,7 +46,7 @@ void hub75_clear(void) {
 }
 
 void hub75_fill(hub75_color_t color) {
-    const uint8_t value = color_bits(color);
+    const hub75_color_t value = color_bits(color);
     for (uint32_t y = 0; y < HUB75_HEIGHT; ++y) {
         for (uint32_t x = 0; x < HUB75_WIDTH; ++x) {
             (*hub75_back)[y][panel_x0 + x] = value;
@@ -88,7 +88,7 @@ void hub75_fill_rect(int32_t x, int32_t y, int32_t width, int32_t height, hub75_
         bottom = HUB75_HEIGHT;
     }
 
-    const uint8_t value = color_bits(color);
+    const hub75_color_t value = color_bits(color);
     for (uint32_t py = (uint32_t)top; py < (uint32_t)bottom; ++py) {
         for (uint32_t px = (uint32_t)left; px < (uint32_t)right; ++px) {
             (*hub75_back)[py][panel_x0 + px] = value;
