@@ -9,4 +9,7 @@
 // simulator feeds them from the keyboard (sim/input_sim.c).
 bool input_poll(bns_packet_t *out);
 
+// Set up the receiver UART (board) or nothing (simulator). Call once at start.
+void input_init(void);
+
 #endif // INPUT_H

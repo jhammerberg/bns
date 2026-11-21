@@ -44,6 +44,7 @@
 #include "hud.h"
 #include "game.h"
 #include "timer.h"
+#include "input.h"
 
 int _write(int file, char *ptr, int len)
 {
@@ -63,6 +64,7 @@ int main(void){
     }
     SystemCoreClockUpdate();
     timer_init();
+    input_init(); // receiver XIAO on UART (Arduino D0/D1)
 
     // if (!imu_init(0x28)) {
     //     for (;;) {}
