@@ -16,6 +16,7 @@ struct Player {
     int inputCount;
     bool shieldActive;
     int shieldHealth;
+    int maxShieldHealth;
     volatile bool reset; // volatile: set from the reset button interrupt
 };
 
@@ -24,7 +25,7 @@ typedef struct longestCombo {
     int length;
 } longestCombo;
 
-struct longestCombo findLongestMatchingSpell(struct Player player);
+struct longestCombo findLongestMatchingSpell(struct Player* player);
 void castSpell(struct Player *player, struct Spell spell);
 void receiveSpell(struct Player *player, struct Spell spell);
 void registerInput(struct Player *player, enum inputs input);

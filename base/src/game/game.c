@@ -2,6 +2,8 @@
 #include "hub75.h"
 #include "hub75_text.h"
 #include "game.h"
+#include "game_assets.h"
+#include "timer.h"
 
 
 void start_game(struct Player *player1, struct Player *player2) {
@@ -10,12 +12,14 @@ void start_game(struct Player *player1, struct Player *player2) {
     player1->inputCount = 0;
     player1->shieldActive = false;
     player1->shieldHealth = 0;
+    player1->maxShieldHealth = 0;
 
     player2->health = 100;
     player2->mana = 100;
     player2->inputCount = 0;
     player2->shieldActive = false;
     player2->shieldHealth = 0;
+    player2->maxShieldHealth = 0;
 
     // start countdown timer for game start
     countdown();
@@ -34,15 +38,23 @@ void reset_game(struct Player *player1, struct Player *player2) {
 
 void countdown() {
     // display countdown on screen
-    hub75_draw_char('3', 0, 0, HUB75_WHITE, HUB75_BLACK);
-    hub75_refresh();
-    // delay(1000);
-    hub75_draw_char('2', 0, 0, HUB75_WHITE, HUB75_BLACK);
-    hub75_refresh();
-    // delay(1000);
-    hub75_draw_char('1', 0, 0, HUB75_WHITE, HUB75_BLACK);
-    hub75_refresh();
-    // delay(1000);
+    uint32_t start = millis();
+    draw_countdown_number('3');
+    while(millis() - start < 1000) {
+        hub75_refresh();
+    }
+    start = millis();
+    draw_countdown_number('2');
+    while(millis() - start < 1000) {
+        hub75_refresh();
+    }
+
+    start = millis();
+    draw_countdown_number('1');
+    while(millis() - start < 1000) {
+        hub75_refresh();
+    }
+    return;
 }
 
 
@@ -67,12 +79,26 @@ void end_game(int winner, struct Player *player1, struct Player *player2) {
 
 // maybe add inputs for controls?
 void run_game(struct Player *player1, struct Player *player2) {
+    hub75_clear();
+    uint32_t last_mana_regen = millis();
+    
     while(player1->health > 0 && player2->health > 0) {
         // Game loop
         // Handle player inputs and game logic here
-        player1->mana += MANA_REGEN_RATE;
-        player2->mana += MANA_REGEN_RATE;
-    }
+
+        if(millis() - last_mana_regen >= 1000) {
+            last_mana_regen = millis();
+            player1->mana += player1->mana == MAX_MANA ? 0 : MANA_REGEN_RATE;
+            player2->mana += player2->mana == MAX_MANA ? 0 : MANA_REGEN_RATE;
+        }
+        
+        
+
+        draw_game(player1, player2);
+        hub75_refresh();
+    }       
+
+    
 
     if(player1->health <= 0) {
         end_game(2, player1, player2); // Player 2 wins
@@ -80,6 +106,8 @@ void run_game(struct Player *player1, struct Player *player2) {
         end_game(1, player1, player2); // Player 1 wins
     }
 }
+
+   
 
 
 

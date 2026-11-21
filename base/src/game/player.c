@@ -4,8 +4,8 @@
 #include <stdio.h>
 #include "player.h"
 
-struct longestCombo findLongestMatchingSpell(struct Player player) {
-    enum inputs *inputBuffer = player.inputBuffer;
+struct longestCombo findLongestMatchingSpell(struct Player* player) {
+    enum inputs *inputBuffer = player->inputBuffer;
 
     struct longestCombo result = {0};
 
@@ -14,8 +14,8 @@ struct longestCombo findLongestMatchingSpell(struct Player player) {
         int comboLength = spell.comboLength;
         int matchCount = 0;
 
-        for(int j = 0; j < comboLength && j < player.inputCount; j++) {
-            if(inputBuffer[7 - player.inputCount + j] == spell.combo[j]) {
+        for(int j = 0; j < comboLength && j < player->inputCount; j++) {
+            if(inputBuffer[7 - player->inputCount + j] == spell.combo[j]) {
                 matchCount++;
             } else {
                 break;
@@ -23,7 +23,7 @@ struct longestCombo findLongestMatchingSpell(struct Player player) {
             
         }
 
-        if(matchCount == player.inputCount) {
+        if(matchCount == player->inputCount) {
             result.spell = spell;
             result.length = matchCount;
         }
@@ -46,6 +46,7 @@ void castSpell(struct Player *player, struct Spell spell) {
             } else {
                 player->shieldActive = true;
                 player->shieldHealth = spell.shieldHealth;
+                player->maxShieldHealth = spell.shieldHealth;
                 player->mana -= spell.manaCost;
             }
         } else if(spell.type == HEAL) {
@@ -90,7 +91,7 @@ void registerInput(struct Player *player, enum inputs input) {
         player->inputBuffer[i] = player->inputBuffer[i + 1];
     }
     player->inputBuffer[6] = input;
-    struct longestCombo combo = findLongestMatchingSpell(*player);
+    struct longestCombo combo = findLongestMatchingSpell(player);
     if(combo.length > 0) {
         if(combo.spell.comboLength == combo.length) {
             player->inputCount = 0;

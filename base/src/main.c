@@ -39,9 +39,11 @@
 #include <stdio.h>
 #include "cybsp.h"
 #include "hub75.h"
+#include "hub75_text.h"
 #include "imu.h"
 #include "game_assets.h"
 #include "game.h"
+#include "timer.h"
 
 int _write(int file, char *ptr, int len)
 {
@@ -60,6 +62,7 @@ int main(void){
         for (;;) { }
     }
     SystemCoreClockUpdate();
+    timer_init();
 
     // if (!imu_init(0x28)) {
     //     for (;;) {}
@@ -104,7 +107,13 @@ int main(void){
 
         // draw_enemy_name();
 
-        draw_victory_screen(true);
+
+        
+        // draw_victory_screen(true);
+
+        struct Player p1, p2;
+
+        start_game(&p1, &p2);
     for (;;) {
         hub75_refresh();   // REQUIRED continuously, even for a still image.
         // Short, nonblocking input/game work may go here.

@@ -1,5 +1,6 @@
 #include "hub75.h"
 #include "hub75_text.h"
+#include "player.h"
 #include "spells.h"
 #include "game_assets.h"
 
@@ -164,21 +165,33 @@ void draw_opponent_shield_bar(int totalShieldHealth, int maxShieldHealth, bool s
 
 }
 
-void draw_spell_info() {
+void draw_spell_info(struct Player* player) {
+    struct longestCombo combo = findLongestMatchingSpell(player);
+    int attackLength = 0;
+    int shieldLength = 0;
+    int healLength = 0;
+
+    if(combo.spell.type == ATTACK) {
+        attackLength = combo.length;
+    } else if(combo.spell.type == SHIELD) {
+        shieldLength = combo.length;
+    } else if(combo.spell.type == HEAL) {
+        healLength = combo.length;
+    }
     draw_spell_name(2, SPELL_INFO_START, "fire");
-    draw_combo(2, SPELL_INFO_START + HUB75_SMALL_CHAR_HEIGHT, SPELLS[0], 2);
+    draw_combo(2, SPELL_INFO_START + HUB75_SMALL_CHAR_HEIGHT, SPELLS[0], attackLength);
 
     draw_spell_name(34, SPELL_INFO_START, "shock");
-    draw_combo(34, SPELL_INFO_START + HUB75_SMALL_CHAR_HEIGHT, SPELLS[1], 2);
+    draw_combo(34, SPELL_INFO_START + HUB75_SMALL_CHAR_HEIGHT, SPELLS[1], attackLength);
 
     draw_spell_name(2, SPELL_INFO_START + SPELL_INFO_OFFSET, "shield");
-    draw_combo(2, SPELL_INFO_START + SPELL_INFO_OFFSET + HUB75_SMALL_CHAR_HEIGHT, SPELLS[2], 0);
+    draw_combo(2, SPELL_INFO_START + SPELL_INFO_OFFSET + HUB75_SMALL_CHAR_HEIGHT, SPELLS[2], shieldLength);
 
     draw_spell_name(34, SPELL_INFO_START + SPELL_INFO_OFFSET, "fort");
-    draw_combo(34, SPELL_INFO_START + SPELL_INFO_OFFSET + HUB75_SMALL_CHAR_HEIGHT, SPELLS[3], 0);
+    draw_combo(34, SPELL_INFO_START + SPELL_INFO_OFFSET + HUB75_SMALL_CHAR_HEIGHT, SPELLS[3], shieldLength);
 
     draw_spell_name(2, SPELL_INFO_START + SPELL_INFO_OFFSET*2, "heal");
-    draw_combo(2, SPELL_INFO_START + SPELL_INFO_OFFSET*2 + HUB75_SMALL_CHAR_HEIGHT, SPELLS[4], 0);
+    draw_combo(2, SPELL_INFO_START + SPELL_INFO_OFFSET*2 + HUB75_SMALL_CHAR_HEIGHT, SPELLS[4], healLength);
 }
 
 void draw_enemy_name() {
@@ -200,4 +213,25 @@ void draw_victory_screen(bool userWon) {
         hub75_draw_text_small("play again", 12, 50, HUB75_WHITE, HUB75_BLACK);
 
     }
+}
+
+// Digits in the 5x8 font only use the top 7 rows, so center a 5x7 glyph.
+// The panel is 64x64, so an odd-sized glyph can't be exactly centered;
+// this leaves the extra pixel on the right and bottom.
+#define COUNTDOWN_DIGIT_HEIGHT 7
+#define COUNTDOWN_X (((int)HUB75_WIDTH - (int)HUB75_GLYPH_WIDTH) / 2)
+#define COUNTDOWN_Y (((int)HUB75_HEIGHT - COUNTDOWN_DIGIT_HEIGHT) / 2)
+
+void draw_countdown_number(char num) {
+    hub75_draw_char(num, COUNTDOWN_X, COUNTDOWN_Y, HUB75_WHITE, HUB75_BLACK);
+}
+
+void draw_game(struct Player* player1, struct Player* player2) {
+    draw_spell_info(player1);
+    draw_health_bar(player1->health);
+    draw_mana_bar(player1->mana);
+    draw_shield_bar(player1->shieldHealth, player1->maxShieldHealth, player1->shieldActive);
+    draw_opponent_health_bar(player2->health);
+    draw_opponent_shield_bar(player2->shieldHealth, player2->maxShieldHealth, player2->shieldActive);
+    draw_enemy_name();
 }

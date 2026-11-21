@@ -70,10 +70,14 @@ void draw_combo(int x, int y, Spell spell, int currentCombo);
 
 void draw_spell_name(int x, int y, char* spell_name);
 
-void draw_spell_info();
+void draw_spell_info(struct Player* player);
 
 
 #define COMBO_OFFSET ((int)HUB75_SMALL_CHAR_HEIGHT + 1)
 void draw_spell(int x, int y, Spell spell);
 
 void draw_victory_screen(bool userWon);
+
+void draw_countdown_number(char num);
+
+void draw_game(struct Player* player1, struct Player* player2);
