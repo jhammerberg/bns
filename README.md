@@ -10,13 +10,17 @@ XMC4700 base driving two HUB75 panels.
   esp/receiver/  XIAO ESP32-C6 at the base (C, ESP-IDF)
   common/     protocol.h, shared by base and esp
   sim/        virtual 64x64 / 128x64 panels running the real base firmware
-  docs/       base wiring diagram, bug log
+  art/        .sprite sources (animations), compiled by tools/gen_sprites.py
+  tools/      asset generators
+  docs/       wiring diagram, bug log, display/animation notes
   reference/  datasheets
 
 Build:
 
 - sim:  just watch [2]   live in terminal, rebuilds on save; sim/out/frame.png
         make shot SECONDS=2               headless run, then exit
+- art:  just sprites   regenerate base/src/assets/anim_assets.{c,h} (watch does it too)
+- test: just test
 
 - base: cd base && make getlibs && make build   (make program to flash)
   If ModusToolbox is not in a default location, set CY_TOOLS_PATHS.
