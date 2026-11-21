@@ -29,7 +29,24 @@ Newest at the bottom. Symptom, cause, fix.
 - Fix: keep HUB75 pins on strong/sharp in `base/src/display/hub75.c`.
   Drive codes mean different things per pad class (XMC4700 RM Table 26-6).
 
+## 2026-11-21 Panels stay dark after flashing (needs RESET)
+- Symptom: after `just flash xmc` the game doesn't start.
+- Cause: the J-Link leaves the board in a debug state after programming.
+- Fix: press the kit's RESET button after flashing.
+
+## 2026-11-21 Flash interrupted, board in boot ROM
+- Symptom: panels dark even after RESET; debugger shows PC = 0x000000E6.
+- Cause: a `just flash xmc` was cancelled mid-write; no valid program in flash.
+- Fix: flash again and let it finish.
+
+## 2026-11-21 Game loop crawling, display timer stalled
+- Symptom: frame counter stuck, SysTick ~10x slow, debug serial silent.
+- Cause: `__WFI()` in `hub75_present()`; XMC4700 sleep (SCU SLEEPCR default)
+  slows the system clock and stops the CCU clock that drives the display.
+- Fix: spin-wait instead of sleeping (`base/src/display/hub75.c`).
+
 ## Quick diagnosis
+- Debug serial (J-Link VCOM, 115200) prints one stats line per second: fps, display CPU, game time, UART rx.
 - White looks yellow: blue data line (B1 pin 3 / B2 pin 7) missing.
 - A whole band of rows missing: a row address line (A-E).
 - Shapes shimmer, solid areas fine: grounds or clock signal integrity.
