@@ -1,0 +1,451 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>BNS base station wiring</title>
+<style>
+  body { font: 15px/1.5 -apple-system, system-ui, sans-serif; margin: 0; background: #f6f5f2; color: #1d1d1f; }
+  main { max-width: 1260px; margin: auto; padding: 24px; }
+  h1 { font-size: 26px; margin: 0 0 4px; }
+  h2 { font-size: 20px; margin: 40px 0 6px; }
+  p { margin: 6px 0; max-width: 900px; }
+  .card { background: #fff; border: 1px solid #ddd; border-radius: 12px; padding: 14px; margin: 12px 0; }
+  svg { width: 100%; height: auto; display: block; }
+  svg text { font-family: -apple-system, system-ui, sans-serif; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 22px; margin: 8px 0 0; font-size: 14px; }
+  .legend span { display: inline-flex; align-items: center; }
+  .legend i { display: inline-block; width: 28px; height: 6px; margin-right: 7px; border-radius: 3px; }
+  .warn { background: #fff4e5; border-left: 4px solid #f08c00; padding: 8px 12px; border-radius: 4px; margin: 10px 0; max-width: 900px; }
+  .note { background: #e7f1ff; border-left: 4px solid #1c7ed6; padding: 8px 12px; border-radius: 4px; margin: 10px 0; max-width: 900px; }
+  table { border-collapse: collapse; font-size: 14px; }
+  td, th { padding: 5px 12px; border-bottom: 1px solid #eee; text-align: left; }
+  th { background: #fafafa; }
+  ol li, ul li { margin: 4px 0; }
+  .sw { display: inline-block; width: 12px; height: 12px; border-radius: 50%; vertical-align: -1px; margin-right: 6px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 900px) { .grid2 { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<main>
+<h1>BNS base station: wiring</h1>
+<p>One 5 V wall brick powers both panels, the XMC4700 Relax Kit and the receiver XIAO. Diagrams are schematic, not to scale.</p>
+
+<!-- ============================================================ -->
+<h2>1. Overview</h2>
+<div class="card">
+<svg viewBox="0 0 1220 940" id="overview">
+  <defs>
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M20 0H0V20" fill="none" stroke="#f0f0f0" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="1220" height="940" fill="url(#grid)"/>
+
+  <!-- brick + jack + fuse -->
+  <rect x="30" y="40" width="150" height="80" rx="10" fill="#3a3a3c"/>
+  <text x="105" y="75" fill="#fff" font-size="15" text-anchor="middle" font-weight="600">5 V wall brick</text>
+  <text x="105" y="96" fill="#ccc" font-size="13" text-anchor="middle">6 A, plugs into the wall</text>
+  <path d="M180 80H230" stroke="#555" stroke-width="7" stroke-linecap="round"/>
+  <rect x="230" y="55" width="90" height="50" rx="6" fill="#cfd2d6" stroke="#888"/>
+  <text x="275" y="77" font-size="13" text-anchor="middle" font-weight="600">barrel jack</text>
+  <text x="275" y="94" font-size="11" text-anchor="middle" fill="#555">center = +</text>
+  <text x="390" y="50" font-size="12" text-anchor="middle" fill="#333">5 A fuse</text>
+
+  <!-- buses -->
+  <rect x="320" y="430" width="380" height="34" rx="6" fill="#ffe1e1" stroke="#d62828" stroke-width="2"/>
+  <rect x="320" y="500" width="380" height="34" rx="6" fill="#e4e4e4" stroke="#1d1d1f" stroke-width="2"/>
+  <text x="712" y="452" font-size="15" font-weight="700" fill="#d62828">+5V bus</text>
+  <text x="712" y="522" font-size="15" font-weight="700">GND bus</text>
+  <text x="712" y="560" font-size="12" fill="#555">each bus = one 5-slot Wago 221-415 (see section 2)</text>
+
+  <!-- panels -->
+  <g>
+    <rect x="740" y="30" width="430" height="180" rx="6" fill="#26292e"/>
+    <text x="1155" y="56" fill="#fff" font-size="15" text-anchor="end" font-weight="600">Panel 1 (back side)</text>
+    <rect x="760" y="85" width="46" height="70" rx="4" fill="#5c5f66"/>
+    <text x="768" y="80" fill="#bbb" font-size="11">power</text>
+    <rect x="880" y="150" width="80" height="40" rx="4" fill="#4a4d55" stroke="#999"/>
+    <text x="920" y="175" fill="#fff" font-size="13" text-anchor="middle">OUT</text>
+    <rect x="1060" y="150" width="80" height="40" rx="4" fill="#4a4d55" stroke="#ffd43b" stroke-width="2"/>
+    <text x="1100" y="175" fill="#ffd43b" font-size="13" text-anchor="middle" font-weight="700">IN</text>
+    <text x="1010" y="140" fill="#aaa" font-size="11" text-anchor="middle">◀ arrows on PCB: IN → OUT</text>
+  </g>
+  <g>
+    <rect x="740" y="240" width="430" height="180" rx="6" fill="#26292e"/>
+    <text x="1080" y="266" fill="#fff" font-size="15" text-anchor="end" font-weight="600">Panel 2 (back side)</text>
+    <rect x="760" y="295" width="46" height="70" rx="4" fill="#5c5f66"/>
+    <text x="768" y="290" fill="#bbb" font-size="11">power</text>
+    <rect x="880" y="360" width="80" height="40" rx="4" fill="#4a4d55" stroke="#999"/>
+    <text x="920" y="385" fill="#888" font-size="13" text-anchor="middle">OUT</text>
+    <text x="920" y="414" fill="#888" font-size="11" text-anchor="middle">unused</text>
+    <rect x="1060" y="360" width="80" height="40" rx="4" fill="#4a4d55" stroke="#ffd43b" stroke-width="2"/>
+    <text x="1100" y="385" fill="#ffd43b" font-size="13" text-anchor="middle" font-weight="700">IN</text>
+  </g>
+  <!-- caps at panels -->
+  <g id="caps"></g>
+
+  <!-- Relax kit -->
+  <rect x="420" y="600" width="440" height="300" rx="12" fill="#e8eef7" stroke="#4a6fa5" stroke-width="2"/>
+  <text x="845" y="626" font-size="16" text-anchor="end" font-weight="700" fill="#2b4a78">XMC4700 Relax Kit</text>
+  <text x="480" y="619" font-size="10.5" text-anchor="middle" fill="#2b4a78">X1·35 VDD5</text>
+  <text x="560" y="619" font-size="10.5" text-anchor="middle" fill="#2b4a78">X1·39 GND</text>
+
+  <rect x="440" y="640" width="180" height="62" rx="6" fill="#fff" stroke="#9bb"/>
+  <text x="452" y="656" font-size="10.5" fill="#666">Arduino header</text>
+  <text x="452" y="675" font-size="12.5">D0 = P2.15 (RX)</text>
+  <text x="452" y="697" font-size="12.5">D1 = P2.14 (TX)</text>
+
+  <rect x="440" y="716" width="190" height="154" rx="6" fill="#fff" stroke="#9bb"/>
+  <text x="452" y="733" font-size="11" fill="#666">Header X1 → ribbon</text>
+  <g id="x1rows"></g>
+  <rect x="650" y="645" width="190" height="225" rx="6" fill="#fff" stroke="#9bb"/>
+  <text x="662" y="662" font-size="11" fill="#666">Header X2 → ribbon</text>
+  <g id="x2rows"></g>
+
+  <rect x="406" y="845" width="22" height="36" rx="3" fill="#888"/>
+  <text x="420" y="922" font-size="12" fill="#555">X101 debug micro-USB → Mac: OK any time (on-board D103 + SS54)</text>
+
+  <!-- XIAO -->
+  <rect x="40" y="640" width="190" height="170" rx="10" fill="#1f3d2b"/>
+  <rect x="26" y="700" width="18" height="44" rx="4" fill="#aaa"/>
+  <text x="135" y="700" fill="#fff" font-size="15" text-anchor="middle" font-weight="700">XIAO ESP32-C6</text>
+  <text x="135" y="720" fill="#bfe3c9" font-size="12" text-anchor="middle">receiver</text>
+  <text x="150" y="660" fill="#fff" font-size="12" text-anchor="middle">5V</text>
+  <text x="200" y="660" fill="#fff" font-size="12" text-anchor="middle">GND</text>
+  <text x="222" y="744" fill="#fff" font-size="12" text-anchor="end">D6 TX</text>
+  <text x="222" y="779" fill="#fff" font-size="12" text-anchor="end">D7 RX</text>
+  <text x="40" y="832" font-size="12" fill="#b00020" font-weight="600">USB-C → Mac: unplug the 5V wire first!</text>
+  <text x="40" y="848" font-size="11" fill="#555">5V pin = raw USB VBUS (no on-board diode)</text>
+
+  <g id="wires"></g>
+  <g id="parts"></g>
+  <g id="dots"></g>
+  <g id="labels">
+    <text x="650" y="98" font-size="12" fill="#d62828">18 AWG</text>
+    <text x="1203" y="470" font-size="13" fill="#555" transform="rotate(-90 1203 470)" text-anchor="middle">HUB75: 16-wire ribbon or F-F jumpers → Panel 1 IN</text>
+    <text x="1010" y="219" font-size="11" fill="#555" text-anchor="middle">short ribbon (came with panel)</text>
+    <text x="345" y="664" font-size="11" fill="#f08c00" font-weight="600">TX→RX</text>
+    <text x="330" y="800" font-size="11" fill="#1c7ed6" font-weight="600">RX←TX</text>
+  </g>
+</svg>
+<div class="legend">
+  <span><i style="background:#d62828"></i>+5 V</span>
+  <span><i style="background:#1d1d1f"></i>GND</span>
+  <span><i style="background:#f08c00"></i>UART: XIAO TX → kit RX</span>
+  <span><i style="background:#1c7ed6"></i>UART: kit TX → XIAO RX</span>
+  <span><i style="background:#8a8f98;height:10px"></i>HUB75 data (16 wires)</span>
+  <span><svg width="34" height="18" viewBox="0 0 34 18" style="width:34px"><path d="M2 9H32" stroke="#555" stroke-width="2"/><polygon points="11,2 11,16 23,9" fill="#222"/><path d="M23 2V16" stroke="#222" stroke-width="3"/></svg>&nbsp;diode, bar = band end</span>
+</div>
+</div>
+
+<div class="warn"><b>Never</b> connect anything to a VDD3.3 / 3V3 pin, and don't run +5 V into the kit or XIAO without its diode.<br>
+<b>Relax Kit:</b> safe to plug the Mac into X101 any time. The kit already has Schottky diodes (D101/D103, BAS3010A) between each USB jack and VDD5, so nothing flows back into the Mac; SS54 stops the Mac from powering the panels.<br>
+<b>XIAO: different.</b> Its 5V pin is wired straight to the USB-C VBUS (schematic sheet 3: header pin 14 = VBUS; the on-board Schottky D1 sits <i>after</i> that, before the 3.3 V buck). With the 5V wire attached and the USB-C plugged into the Mac, the brick and the Mac's port are tied together through SS14. <b>Pull the XIAO's 5V jumper before plugging it into the Mac</b> (GND, TX, RX can stay).</div>
+
+<!-- ============================================================ -->
+<h2>2. What a "bus" is</h2>
+<p>A bus is one shared connection point. Every wire you land on the red one carries +5 V; every wire on the black one is ground. The easiest version is a <b>Wago 221-415</b> lever connector: flip a lever up, push in a stripped wire, flip it down. You need exactly 5 slots on each, so two connectors cover everything.</p>
+<div class="card">
+<svg viewBox="0 0 1220 330" id="bus"></svg>
+</div>
+<p>The diodes go in-line: solder one into the wire, then slide heat-shrink over it. The silver/white <b>band</b> points toward the board being powered.</p>
+
+<!-- ============================================================ -->
+<h2>3. Pin maps</h2>
+<div class="grid2">
+  <div class="card">
+    <b>HUB75 connector on Panel 1 "IN"</b>, looking at the pins
+    <svg viewBox="0 0 600 310" id="hub"></svg>
+    <p style="font-size:13px;color:#555"><b>Not in our datasheets:</b> the reference folder only has the FM6124 driver chip datasheet, not the panel's connector. This is the standard HUB75 (64×64, E on pin 8) pinout. Pin 1 is marked with a triangle or "1" on the panel silkscreen. If your panel's silkscreen labels differ from this drawing, trust the silkscreen.</p>
+  </div>
+  <div class="card">
+    <b>Relax Kit headers X1 / X2</b>, top view (same orientation as Figure 7 in the kit manual)
+    <svg viewBox="-60 0 720 620" id="hdr"></svg>
+    <p style="font-size:13px;color:#555">Pin numbers are also printed on the bottom of the PCB; check against that before plugging in.</p>
+  </div>
+</div>
+<div class="note"><b>Wire colours</b> assume the standard rainbow ribbon: pin 1 (the edge with the ▶ / stripe) is <b>brown</b>, then red, orange, yellow, green, blue, violet, grey, white, black, and it repeats (pin 11 brown … pin 16 blue). If your pin-1 wire is a different colour, the colours here are off but the <b>pin numbers</b> are still right: go by the pin number. Both HUB75 grounds (pins 4 and 16) must be connected.</div>
+<div class="card">
+<table id="maptable">
+  <tr><th>HUB75 pin</th><th>Ribbon wire</th><th>Signal</th><th>XMC4700 pin</th><th>Header pin</th></tr>
+</table>
+</div>
+
+<!-- ============================================================ -->
+<div class="note"><b>Logic level, works but out of spec:</b> the FM6124 datasheet gives V<sub>IH</sub> = 0.7·VDD = 3.5 V at 5 V, and the XMC4700 drives 3.3 V. Most panels tolerate this (many buffer inputs with a 74HC245). If you see flicker or noise, add a 74HCT245 level shifter in the ribbon.</div>
+
+<h2>4. Parts</h2>
+<div class="card">
+<table>
+  <tr><th>Qty</th><th>Part</th><th>For</th></tr>
+  <tr><td>1</td><td>5 V ≥6 A brick + matching panel-mount barrel jack</td><td>input (you have the brick)</td></tr>
+  <tr><td>1</td><td>Inline fuse holder + 5 A fuse</td><td>between jack + and +5V bus</td></tr>
+  <tr><td>2</td><td>Wago 221-415 (5-slot)</td><td>+5V bus, GND bus</td></tr>
+  <tr><td>2</td><td>1000 µF, ≥10 V electrolytic cap</td><td>one across each panel's power input</td></tr>
+  <tr><td>1</td><td>SS54 Schottky diode</td><td>+5V → Relax Kit VDD5</td></tr>
+  <tr><td>1</td><td>SS14 (or 1N5817) Schottky diode</td><td>+5V → XIAO 5V (stops the XIAO's USB powering the bus)</td></tr>
+  <tr><td>—</td><td>18 AWG red + black wire</td><td>jack → buses → panels</td></tr>
+  <tr><td>—</td><td>22–24 AWG wire or F-F dupont jumpers</td><td>kit + XIAO power, UART</td></tr>
+  <tr><td>—</td><td>16 F-F jumpers, or 2×8 IDC ribbon + breakout</td><td>kit headers → Panel 1 IN</td></tr>
+  <tr><td>—</td><td>Heat-shrink</td><td>diodes, fuse, splices</td></tr>
+</table>
+</div>
+
+<!-- ============================================================ -->
+<h2>5. Bring-up order</h2>
+<div class="card">
+<ol>
+  <li><b>Brick + jack + fuse + buses only.</b> Plug in, meter the buses: 5.0–5.2 V, red bus positive.</li>
+  <li><b>Add kit and XIAO power</b> (no panels). Green power LED on the kit lights; VDD5 reads about 4.6–4.8 V (diode drop is normal).</li>
+  <li><b>Add panel power</b> with caps, then the HUB75 ribbon, then run the display.</li>
+  <li><b>Add the UART</b> wires. Plug the Mac into X101 whenever you like. For the XIAO, pull its 5V jumper first, then plug in USB-C.</li>
+</ol>
+</div>
+<div class="note">Software: <code>base/src/input.c</code> reads the receiver on U1C0 (P2.15/P2.14), and the firmware drives the 128-wide chain (<code>HUB75_PANELS=2</code> in <code>base/Makefile</code>); panel 0 = Panel 1, wired to the XMC.</div>
+
+<h2>6. Checked against</h2>
+<div class="card">
+<table>
+<tr><th>Item</th><th>Source</th><th>Result</th></tr>
+<tr><td>X1/X2 pin numbers, VDD5 = X1·35 / X2·31, GND = X1·37/39/40, X2·37–40</td><td>Relax Kit manual Fig. 7 + schematic sheet 3/3</td><td>✔ match</td></tr>
+<tr><td>HUB75 signals on P5.0–P5.7, P5.10, P0.0–P0.4</td><td><code>base/src/display/hub75.c</code> (RGB bit0=R, A = bit0 of row)</td><td>✔ match</td></tr>
+<tr><td>Arduino X303 pin 1 = P2.15 UART_RX, pin 2 = P2.14 UART_TX; Relax Kit has 0 Ω bridges, not level shifters</td><td>Kit schematic sheet 3/3, Table 2</td><td>✔ direct 3.3 V</td></tr>
+<tr><td>P2.15 = U1C0.DX0C, P2.14 = U1C0.DOUT0</td><td>XMC4700 datasheet port function table</td><td>✔</td></tr>
+<tr><td>XIAO D6 = GPIO16 TX, D7 = GPIO17 RX</td><td>XIAO wiki pin map, pinout CSV, <code>esp/receiver/main/main.c</code></td><td>✔</td></tr>
+<tr><td>Kit USB → VDD5 through Schottky (D101 on X100, D103 on X101)</td><td>Kit schematic sheet 1/3, BOM (BAS3010A)</td><td>✔ no back-feed into Mac</td></tr>
+<tr><td>XIAO 5V pin</td><td>XIAO schematic sheet 3 (U2 pin 14 = VBUS, D1 LMBR4010 after it)</td><td>✘ raw VBUS: pull jumper before USB</td></tr>
+<tr><td>FM6124 input threshold</td><td>FM6124 datasheet: V<sub>IH</sub> = 0.7·VDD</td><td>⚠ 3.3 V drive is below spec at 5 V</td></tr>
+<tr><td>HUB75 connector pinout</td><td>not in reference/ (industry convention)</td><td>⚠ check panel silkscreen</td></tr>
+</table>
+</div>
+</main>
+
+<script>
+const NS = "http://www.w3.org/2000/svg";
+function el(parent, tag, attrs, text) {
+  const e = document.createElementNS(NS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (text !== undefined) e.textContent = text;
+  parent.appendChild(e);
+  return e;
+}
+const C = { red: "#d62828", gnd: "#1d1d1f", tx: "#f08c00", rx: "#1c7ed6", rib: "#8a8f98",
+            R: "#e03131", G: "#2f9e44", B: "#1c7ed6", addr: "#7048e8", ctl: "#0c8599" };
+
+/* ---------- overview ---------- */
+const ov = document.getElementById("overview");
+const wires = ov.querySelector("#wires"), dots = ov.querySelector("#dots"), parts = ov.querySelector("#parts");
+function wire(d, color, w = 4) {
+  el(wires, "path", { d, fill: "none", stroke: "#fff", "stroke-width": w + 5, "stroke-linejoin": "round", "stroke-linecap": "round" });
+  el(wires, "path", { d, fill: "none", stroke: color, "stroke-width": w, "stroke-linejoin": "round", "stroke-linecap": "round" });
+}
+// power
+wire("M320 70H360", C.red); wire("M420 70H440V447", C.red);
+wire("M320 92H400V517", C.gnd);
+wire("M520 447V105H783", C.red); wire("M600 517V135H783", C.gnd);
+wire("M640 447V315H783", C.red); wire("M680 517V345H783", C.gnd);
+wire("M480 447V600", C.red, 3); wire("M560 517V600", C.gnd, 3);
+wire("M360 447V600H150V640", C.red, 3); wire("M380 517V615H200V640", C.gnd, 3);
+// uart
+wire("M230 740H300V671H440", C.tx, 3); wire("M230 775H320V693H440", C.rx, 3);
+// hub75
+wire("M840 760H1190V170H1140", C.rib, 12);
+wire("M535 870V886H1190V760", C.rib, 8);
+wire("M920 190V226H1100V360", C.rib, 10);
+
+// fuse
+el(parts, "rect", { x: 360, y: 61, width: 60, height: 18, rx: 9, fill: "#fff", stroke: "#555", "stroke-width": 1.5 });
+el(parts, "path", { d: "M366 70H414", stroke: "#999", "stroke-width": 2 });
+// diodes
+function diode(x, y, dir, label, sub) {
+  const g = el(parts, "g", {});
+  if (dir === "down") {
+    el(g, "rect", { x: x - 13, y: y - 14, width: 26, height: 30, fill: "#fff" });
+    el(g, "polygon", { points: `${x-9},${y-10} ${x+9},${y-10} ${x},${y+6}`, fill: "#222" });
+    el(g, "path", { d: `M${x-10} ${y+7}H${x+10}`, stroke: "#222", "stroke-width": 3 });
+    el(g, "text", { x: x - 16, y: y + 1, "font-size": 12, "font-weight": 700, "text-anchor": "end" }, label);
+    el(g, "text", { x: x - 16, y: y + 14, "font-size": 10, fill: "#555", "text-anchor": "end" }, sub);
+  } else {
+    el(g, "rect", { x: x - 14, y: y - 12, width: 30, height: 24, fill: "#fff" });
+    el(g, "polygon", { points: `${x+8},${y-9} ${x+8},${y+9} ${x-8},${y}`, fill: "#222" });
+    el(g, "path", { d: `M${x-9} ${y-10}V${y+10}`, stroke: "#222", "stroke-width": 3 });
+    el(g, "text", { x: x, y: y - 16, "font-size": 12, "font-weight": 700, "text-anchor": "middle" }, label);
+    el(g, "text", { x: x, y: y + 26, "font-size": 10, fill: "#555", "text-anchor": "middle" }, sub);
+  }
+}
+diode(480, 568, "down", "SS54", "band toward kit");
+diode(262, 600, "left", "SS14", "band toward XIAO");
+el(parts, "text", { x: 150, y: 590, "font-size": 10, fill: "#b00020", "text-anchor": "middle" }, "removable jumper");
+
+// caps at panels
+const caps = ov.querySelector("#caps");
+for (const y0 of [85, 295]) {
+  el(caps, "path", { d: `M806 ${y0+20}H822M806 ${y0+50}H822`, stroke: "#ccc", "stroke-width": 2 });
+  el(caps, "rect", { x: 822, y: y0 + 10, width: 24, height: 50, rx: 5, fill: "#2b59c3" });
+  el(caps, "rect", { x: 822, y: y0 + 40, width: 24, height: 20, rx: 3, fill: "#9db4ea" });
+  el(caps, "text", { x: 834, y: y0 + 55, "font-size": 12, "text-anchor": "middle", fill: "#1d1d1f", "font-weight": 700 }, "−");
+  el(caps, "text", { x: 852, y: y0 + 30, "font-size": 11, fill: "#ddd" }, "1000 µF");
+  el(caps, "text", { x: 852, y: y0 + 44, "font-size": 10, fill: "#aaa" }, "stripe = −");
+  el(caps, "text", { x: 776, y: y0 + 24, "font-size": 14, fill: "#fff", "font-weight": 700 }, "+");
+  el(caps, "text", { x: 777, y: y0 + 54, "font-size": 14, fill: "#fff", "font-weight": 700 }, "−");
+}
+
+// bus terminals and endpoint dots
+for (const x of [360, 440, 480, 520, 640])
+  el(dots, "circle", { cx: x, cy: 447, r: 7, fill: "#fff", stroke: C.red, "stroke-width": 2.5 });
+for (const x of [380, 400, 560, 600, 680])
+  el(dots, "circle", { cx: x, cy: 517, r: 7, fill: "#fff", stroke: C.gnd, "stroke-width": 2.5 });
+const busLbl = [[360, "XIAO"], [440, "in"], [480, "kit"], [520, "P1"], [640, "P2"]];
+for (const [x, t] of busLbl) el(dots, "text", { x: x + 10, y: 425, "font-size": 10, fill: C.red }, t);
+const gLbl = [[380, "XIAO"], [400, "in"], [560, "kit"], [600, "P1"], [680, "P2"]];
+for (const [x, t] of gLbl) if (t !== "XIAO") el(dots, "text", { x: x + 8, y: 552, "font-size": 10 }, t);
+el(dots, "text", { x: 372, y: 552, "font-size": 10, "text-anchor": "end" }, "XIAO");
+for (const [x, y, c] of [[783,105,C.red],[783,135,C.gnd],[783,315,C.red],[783,345,C.gnd],
+                         [480,600,C.red],[560,600,C.gnd],[150,640,C.red],[200,640,C.gnd],
+                         [230,740,C.tx],[230,775,C.rx],[440,671,C.tx],[440,693,C.rx]])
+  el(dots, "circle", { cx: x, cy: y, r: 5, fill: c, stroke: "#fff", "stroke-width": 1.5 });
+
+// header rows inside kit
+const x1rows = [["33", "P5.10", "OE", C.ctl], ["10", "P0.0", "A", C.addr], ["7", "P0.1", "B", C.addr],
+                ["8", "P0.2", "C", C.addr], ["5", "P0.3", "D", C.addr], ["6", "P0.4", "E", C.addr]];
+const x2rows = [["20", "P5.0", "R1", C.R], ["21", "P5.1", "G1", C.G], ["22", "P5.2", "B1", C.B],
+                ["23", "P5.3", "R2", C.R], ["24", "P5.4", "G2", C.G], ["25", "P5.5", "B2", C.B],
+                ["26", "P5.6", "CLK", C.ctl], ["27", "P5.7", "LAT", C.ctl], ["38", "GND", "GND", C.gnd]];
+function rows(g, list, x, y0, step) {
+  list.forEach(([pin, port, sig, col], i) => {
+    const y = y0 + i * step;
+    el(g, "circle", { cx: x + 8, cy: y - 4, r: 5, fill: col });
+    el(g, "text", { x: x + 20, y, "font-size": 12 }, `pin ${pin}`);
+    el(g, "text", { x: x + 78, y, "font-size": 12, fill: "#555" }, port);
+    el(g, "text", { x: x + 128, y, "font-size": 12, "font-weight": 700, fill: col }, `→ ${sig}`);
+  });
+}
+rows(ov.querySelector("#x1rows"), x1rows, 448, 755, 19);
+rows(ov.querySelector("#x2rows"), x2rows, 658, 684, 20.5);
+
+/* ---------- bus section ---------- */
+const bus = document.getElementById("bus");
+function wago(x0, y0, color, name, labels) {
+  el(bus, "text", { x: x0, y: y0 - 18, "font-size": 15, "font-weight": 700, fill: color === C.gnd ? "#1d1d1f" : color }, name);
+  // wires
+  labels.forEach((t, i) => {
+    const x = x0 + 30 + i * 46;
+    el(bus, "path", { d: `M${x} ${y0+80}V${y0+150}`, stroke: color, "stroke-width": 6, "stroke-linecap": "round" });
+    el(bus, "path", { d: `M${x} ${y0+60}V${y0+82}`, stroke: "#c9a227", "stroke-width": 3 });
+    el(bus, "text", { x: x - 4, y: y0 + 168, "font-size": 12, transform: `rotate(35 ${x-4} ${y0+168})` }, t);
+  });
+  // body
+  el(bus, "rect", { x: x0, y: y0, width: 245, height: 70, rx: 8, fill: "rgba(210,215,220,.55)", stroke: "#8a8f98", "stroke-width": 2 });
+  labels.forEach((_, i) => {
+    const x = x0 + 30 + i * 46;
+    el(bus, "rect", { x: x - 14, y: y0 - 8, width: 28, height: 30, rx: 4, fill: "#f08c00" });
+    el(bus, "rect", { x: x - 6, y: y0 + 40, width: 12, height: 22, rx: 2, fill: "#c9a227", opacity: .7 });
+  });
+  el(bus, "text", { x: x0 + 122, y: y0 + 36, "font-size": 11, "text-anchor": "middle", fill: "#444" }, "metal bar inside joins all 5");
+}
+wago(40, 50, C.red, "+5V bus (Wago 221-415)", ["from jack (via fuse)", "Panel 1 +", "Panel 2 +", "→ SS54 → kit", "→ SS14 → XIAO"]);
+wago(380, 50, C.gnd, "GND bus (Wago 221-415)", ["from jack −", "Panel 1 −", "Panel 2 −", "kit X1·39", "XIAO GND"]);
+// inline diode drawing
+{
+  const x0 = 760, y = 120;
+  el(bus, "text", { x: x0, y: 32, "font-size": 15, "font-weight": 700 }, "In-line diode, physically");
+  el(bus, "path", { d: `M${x0} ${y}H${x0+120}`, stroke: C.red, "stroke-width": 6 });
+  el(bus, "path", { d: `M${x0+120} ${y}H${x0+150}M${x0+230} ${y}H${x0+260}`, stroke: "#aaa", "stroke-width": 3 });
+  el(bus, "rect", { x: x0 + 150, y: y - 16, width: 80, height: 32, rx: 8, fill: "#222" });
+  el(bus, "rect", { x: x0 + 210, y: y - 16, width: 12, height: 32, fill: "#ddd" });
+  el(bus, "path", { d: `M${x0+260} ${y}H${x0+400}`, stroke: C.red, "stroke-width": 6 });
+  el(bus, "rect", { x: x0 + 105, y: y - 22, width: 170, height: 44, rx: 10, fill: "rgba(80,80,80,.12)", stroke: "#999", "stroke-dasharray": "4 3" });
+  el(bus, "text", { x: x0 + 10, y: y - 14, "font-size": 12, fill: "#555" }, "from +5V bus");
+  el(bus, "text", { x: x0 + 300, y: y - 14, "font-size": 12, fill: "#555" }, "to kit / XIAO");
+  el(bus, "text", { x: x0 + 216, y: y + 44, "font-size": 12, "text-anchor": "middle" }, "band ↑ faces the board");
+  el(bus, "text", { x: x0 + 190, y: y + 62, "font-size": 12, "text-anchor": "middle", fill: "#555" }, "dashed = heat-shrink over the joints");
+  el(bus, "text", { x: x0 + 190, y: y + 110, "font-size": 13, "text-anchor": "middle", fill: "#333" }, "Same idea for the fuse: in-line holder");
+  el(bus, "text", { x: x0 + 190, y: y + 128, "font-size": 13, "text-anchor": "middle", fill: "#333" }, "between the jack's + and the +5V Wago.");
+}
+
+/* ---------- HUB75 connector ---------- */
+// Rainbow ribbon: pin 1 is the marked edge, colours follow the resistor code
+// (brown red orange yellow green blue violet grey white black) and repeat.
+const WIRE = { brown: "#8b4a1c", red: "#e03131", orange: "#f76707", yellow: "#fcc419", green: "#2f9e44",
+               blue: "#1c7ed6", violet: "#7048e8", grey: "#868e96", white: "#f1f3f5", black: "#111111" };
+const WIRE_ORDER = ["brown", "red", "orange", "yellow", "green", "blue", "violet", "grey", "white", "black"];
+const wireOf = pin => WIRE_ORDER[(pin - 1) % 10];
+const ink = name => ["yellow", "white", "orange"].includes(name) ? "#111" : "#fff"; // readable text on the wire colour
+const hubPins = {
+  1: ["R1", C.R, "P5.0", "X2·20"], 2: ["G1", C.G, "P5.1", "X2·21"], 3: ["B1", C.B, "P5.2", "X2·22"], 4: ["GND", C.gnd, "GND", "X2·38"],
+  5: ["R2", C.R, "P5.3", "X2·23"], 6: ["G2", C.G, "P5.4", "X2·24"], 7: ["B2", C.B, "P5.5", "X2·25"], 8: ["E", C.addr, "P0.4", "X1·6"],
+  9: ["A", C.addr, "P0.0", "X1·10"], 10: ["B", C.addr, "P0.1", "X1·7"], 11: ["C", C.addr, "P0.2", "X1·8"], 12: ["D", C.addr, "P0.3", "X1·5"],
+  13: ["CLK", C.ctl, "P5.6", "X2·26"], 14: ["LAT", C.ctl, "P5.7", "X2·27"], 15: ["OE", C.ctl, "P5.10", "X1·33"], 16: ["GND", C.gnd, "GND", "X2·37"]
+};
+const hub = document.getElementById("hub");
+el(hub, "rect", { x: 40, y: 95, width: 520, height: 110, rx: 8, fill: "#2a2d33" });
+el(hub, "rect", { x: 270, y: 199, width: 60, height: 10, fill: "#fff" });
+el(hub, "text", { x: 300, y: 225, "font-size": 11, "text-anchor": "middle", fill: "#555" }, "key notch");
+for (let i = 0; i < 8; i++) {
+  const x = 80 + i * 63;
+  for (const [row, pin] of [[0, 2 * i + 1], [1, 2 * i + 2]]) {
+    const y = 130 + row * 42;
+    const [sig, col, port, hdr] = hubPins[pin];
+    const w = wireOf(pin);
+    el(hub, "circle", { cx: x, cy: y, r: 15, fill: WIRE[w], stroke: "#fff", "stroke-width": 1.5 });
+    el(hub, "text", { x, y: y + 4, "font-size": 11, "text-anchor": "middle", fill: ink(w), "font-weight": 700 }, sig);
+    const ty = row === 0 ? 48 : 250;
+    el(hub, "text", { x, y: ty, "font-size": 11, "text-anchor": "middle", fill: "#333" }, `${pin}`);
+    el(hub, "text", { x, y: ty + 14, "font-size": 10, "text-anchor": "middle", fill: "#666" }, port);
+    el(hub, "text", { x, y: ty + 27, "font-size": 10, "text-anchor": "middle", fill: "#666" }, hdr);
+    el(hub, "text", { x, y: ty + 40, "font-size": 10, "text-anchor": "middle", fill: "#333", "font-weight": 700 }, w);
+  }
+}
+el(hub, "polygon", { points: "52,112 52,124 62,118", fill: "#ffd43b" });
+el(hub, "text", { x: 40, y: 18, "font-size": 12, fill: "#555" }, "top row: odd pins · bottom row: even pins · ▶ = pin 1 · colour = ribbon wire");
+
+/* ---------- Relax Kit headers ---------- */
+const X2 = [["GND",40,"GND",39],["GND",38,"GND",37],["VDD3.3",36,"CANL",35],["VDD3.3",34,"CANH",33],["RST#",32,"VDD5",31],
+  ["HIB_1",30,"HIB_0",29],["P2.6",28,"P5.7",27],["P5.6",26,"P5.5",25],["P5.4",24,"P5.3",23],["P5.2",22,"P5.1",21],
+  ["P5.0",20,"P1.15",19],["P6.6",18,"P6.5",17],["P6.4",16,"P6.3",15],["P6.2",14,"P6.1",13],["P6.0",12,"P1.2",11],
+  ["P0.8",10,"P0.7",9],["P3.3",8,"P3.14",7],["P0.15",6,"P0.14",5],["P0.12",4,"P3.11",3],["P3.12",2,"P3.13",1]];
+const X1 = [["GND",40,"GND",39],["VDD3.3",38,"GND",37],["VDD3.3",36,"VDD5",35],["P5.11",34,"P5.10",33],["P1.14",32,"P2.13",31],
+  ["P14.8",30,"P14.9",29],["P15.14",28,"P15.15",27],["P14.6",26,"P14.7",25],["P14.12",24,"P14.13",23],["P14.14",22,"P14.15",21],
+  ["P15.2",20,"P15.3",19],["P15.4",18,"P15.5",17],["P15.7",16,"P15.6",15],["P3.0",14,"P3.1",13],["P0.9",12,"P3.2",11],
+  ["P0.0",10,"P0.10",9],["P0.2",8,"P0.1",7],["P0.4",6,"P0.3",5],["P0.6",4,"P0.5",3],["P0.11",2,"P3.4",1]];
+// header pin -> [label, fill, text colour]; ribbon pins use their wire colour
+const used = { "X1:35": ["+5V via SS54", C.red, "#fff"], "X1:39": ["GND bus", C.gnd, "#fff"] };
+for (let p = 1; p <= 16; p++) {
+  const [sig, , , h] = hubPins[p];
+  const w = wireOf(p);
+  used[h.replace("·", ":")] = [`${sig} (${w}, HUB ${p})`, WIRE[w], ink(w)];
+}
+const hdr = document.getElementById("hdr");
+function header(name, data, x0) {
+  el(hdr, "text", { x: x0 + 140, y: 24, "font-size": 15, "font-weight": 700, "text-anchor": "middle" }, `Pin Header ${name}`);
+  el(hdr, "rect", { x: x0 + 112, y: 36, width: 56, height: 20 * 28 + 8, rx: 4, fill: "#2a2d33" });
+  data.forEach(([lp, ln, rp, rn], i) => {
+    const y = 54 + i * 28;
+    for (const [side, port, num] of [[0, lp, ln], [1, rp, rn]]) {
+      const cx = x0 + (side ? 154 : 126);
+      const u = used[`${name}:${num}`];
+      el(hdr, "rect", { x: cx - 9, y: y - 9, width: 18, height: 18, rx: 3, fill: u ? u[1] : "#777", stroke: u ? "#fff" : "none", "stroke-width": 1.5 });
+      el(hdr, "text", { x: cx, y: y + 3.5, "font-size": 9, "text-anchor": "middle", fill: u ? u[2] : "#fff" }, num);
+      const tx = side ? x0 + 172 : x0 + 108;
+      const anchor = side ? "start" : "end";
+      el(hdr, "text", { x: tx, y: y + 4, "font-size": 11, "text-anchor": anchor, fill: u ? "#111" : "#999", "font-weight": u ? 700 : 400 },
+         u ? (port === "GND" || port.startsWith("VDD") ? u[0] : side ? `${port} ${u[0]}` : `${u[0]} ${port}`) : port);
+    }
+  });
+}
+header("X2", X2, 0);
+header("X1", X1, 300);
+
+/* ---------- table ---------- */
+const tbl = document.getElementById("maptable");
+for (let p = 1; p <= 16; p++) {
+  const [sig, col, port, h] = hubPins[p];
+  const tr = tbl.appendChild(document.createElement("tr")); // HTML row, not el() (that makes SVG elements)
+  const w = wireOf(p);
+  tr.innerHTML = `<td>${p}</td><td><span class="sw" style="background:${WIRE[w]};outline:1px solid #999"></span>${w}</td>` +
+                 `<td><span class="sw" style="background:${col}"></span>${sig}</td><td>${port}</td><td>${h}</td>`;
+}
+</script>
+</body>
+</html>

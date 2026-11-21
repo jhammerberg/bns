@@ -10,6 +10,7 @@ XMC4700 base driving two HUB75 panels.
   esp/receiver/  XIAO ESP32-C6 at the base (C, ESP-IDF)
   common/     protocol.h, shared by base and esp
   sim/        virtual 64x64 / 128x64 panels running the real base firmware
+  docs/       base wiring diagram, bug log
   reference/  datasheets
 
 Build:
