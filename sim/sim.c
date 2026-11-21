@@ -5,6 +5,8 @@
 //   ./bns-sim --seconds 2    run 2 s, no live view, then exit
 //   ./bns-sim --seconds 3 --keys 12.7   scripted key presses, one every
 //                            0.5 s ('.' = skip a slot), for headless tests
+//   ./bns-sim --serial /dev/cu.usbmodemXXXX   also take shapes from a real
+//                            receiver XIAO (esp/receiver) over its USB log
 // Keys 1-4 / 7-0 cast for player 1 / 2 (see input_sim.c); R resets.
 //
 // Always keeps out/frame.png up to date with what the panels show, and
@@ -15,6 +17,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <fcntl.h>
 #include <sys/stat.h>
 #include <termios.h>
 #include <time.h>
@@ -46,6 +49,45 @@ static void terminal_raw(void) {
     raw_terminal = tcsetattr(STDIN_FILENO, TCSANOW, &t) == 0;
 }
 
+// Receiver XIAO's USB serial port (--serial): read without blocking and
+// without resetting the board when the port is closed.
+static int serial_open(const char *path) {
+    const int fd = open(path, O_RDONLY | O_NONBLOCK | O_NOCTTY);
+    if (fd < 0) {
+        perror(path);
+        return -1;
+    }
+    struct termios t;
+    if (tcgetattr(fd, &t) == 0) {
+        cfmakeraw(&t);
+        t.c_cflag &= (tcflag_t)~HUPCL;
+        cfsetspeed(&t, B115200);
+        tcsetattr(fd, TCSANOW, &t);
+    }
+    return fd;
+}
+
+// Feed complete lines from the receiver to the game; returns shapes queued.
+static int serial_poll(int fd) {
+    static char line[256];
+    static size_t len;
+    int queued = 0;
+    char buf[256];
+    ssize_t n;
+    while (fd >= 0 && (n = read(fd, buf, sizeof buf)) > 0) {
+        for (ssize_t i = 0; i < n; ++i) {
+            if (buf[i] == '\n' || len == sizeof line - 1) {
+                line[len] = '\0';
+                queued += sim_input_receiver_line(line);
+                len = 0;
+            } else if (buf[i] != '\r') {
+                line[len++] = buf[i];
+            }
+        }
+    }
+    return queued;
+}
+
 static void terminal_restore(void) {
     if (raw_terminal) {
         tcsetattr(STDIN_FILENO, TCSANOW, &saved_termios);
@@ -68,19 +110,24 @@ static void *firmware_thread(void *arg) {
 int main(int argc, char **argv) {
     double seconds = 0; // 0 = run until Ctrl-C
     const char *script = ""; // --keys
+    const char *serial_path = NULL; // --serial
     for (int i = 1; i < argc; ++i) {
         if (strcmp(argv[i], "--seconds") == 0 && i + 1 < argc) {
             seconds = atof(argv[++i]);
         } else if (strcmp(argv[i], "--keys") == 0 && i + 1 < argc) {
             script = argv[++i];
+        } else if (strcmp(argv[i], "--serial") == 0 && i + 1 < argc) {
+            serial_path = argv[++i];
         } else {
-            fprintf(stderr, "usage: %s [--seconds N] [--keys KEYS]\n", argv[0]);
+            fprintf(stderr, "usage: %s [--seconds N] [--keys KEYS] [--serial PORT]\n", argv[0]);
             return 2;
         }
     }
     const bool live = seconds == 0 && isatty(STDOUT_FILENO);
 
     mkdir("out", 0755);
+    const int serial_fd = serial_path ? serial_open(serial_path) : -1;
+    unsigned serial_shapes = 0;
     signal(SIGINT, on_signal);
     signal(SIGTERM, on_signal);
 
@@ -112,6 +159,7 @@ int main(int argc, char **argv) {
             }
             sim_input_key(key);
         }
+        serial_shapes += (unsigned)serial_poll(serial_fd);
         static size_t next_key;
         while (script[next_key] && now - start >= (next_key + 1) * KEY_INTERVAL_US) {
             sim_input_key(script[next_key++]);
@@ -121,12 +169,16 @@ int main(int argc, char **argv) {
 
         if (live) {
             char status[256], tail[1024];
+            char wands[64] = "";
+            if (serial_fd >= 0) {
+                snprintf(wands, sizeof wands, "   receiver: %u shapes", serial_shapes);
+            }
             snprintf(status, sizeof status,
                      "%ux%u  %s  %u refresh/s   cast: 1-4 player 1, 7-0 player 2 "
-                     "(tri zig circ v)   R resets   Ctrl-C quits",
+                     "(tri zig circ v)   R resets   Ctrl-C quits%s",
                      (unsigned)HUB75_CHAIN_WIDTH, (unsigned)HUB75_HEIGHT,
                      g.lit ? "LIT" : "DARK (firmware not calling hub75_refresh)",
-                     g.refreshes_per_s);
+                     g.refreshes_per_s, wands);
             sim_uart_tail(tail, sizeof tail, 6);
             render_terminal(&g, status, tail);
         }
@@ -149,5 +201,8 @@ int main(int argc, char **argv) {
     if (live) fputs("\x1b[0m\x1b[?25h\n", stdout); // restore cursor
     printf("panels %s, %u refresh/s; wrote out/frame.png, out/uart.log\n",
            g.lit ? "lit" : "DARK", g.refreshes_per_s);
+    if (serial_fd >= 0) {
+        printf("receiver: %u shapes\n", serial_shapes);
+    }
     return 0; // the firmware thread never returns; exiting ends it
 }

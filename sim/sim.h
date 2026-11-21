@@ -18,6 +18,9 @@ void sim_glass_read(sim_glass_t *out);
 // keyboard -> wand shapes (input_sim.c); returns false for unmapped keys
 bool sim_input_key(int key);
 
+// one line of the receiver XIAO's USB log; queues the shape if it is one
+bool sim_input_receiver_line(const char *line);
+
 // UART log: last few lines for the status area
 void sim_uart_tail(char *out, size_t n, int lines);
 
