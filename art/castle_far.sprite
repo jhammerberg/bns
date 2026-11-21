@@ -1,0 +1,17 @@
+# The enemy castle, far away near the top of the play area: hazier stone,
+# Slytherin-green roofs, dimmer windows.
+sprite castle_far
+palette  s=446  l=668  k=223  r=153  R=275  w=A72  d=111
+
+clip idle loop
+frame 1000
+.......r....r..
+..r...Rrr..Rrr.
+.Rrr..lsk..Rrr.
+.Rrr..lsk..lsk.
+.lsksslsksklsk.
+.lskssssssklwk.
+.lwkswssswklsk.
+.lskssssssklsk.
+.lsksssdssklsk.
+.lsksssdssklsk.

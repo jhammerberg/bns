@@ -1,0 +1,24 @@
+# Fireball in flight: a flickering core with a short tail behind it (tail at
+# the bottom, so it reads as rising when shot from our castle).
+sprite fireball
+palette  y=FF4  o=F90  r=F30  d=A10
+
+clip fly loop
+frame 60
+..y..
+.yoy.
+.oyo.
+.ror.
+..d..
+frame 60
+..o..
+.yyo.
+.oyr.
+.rod.
+..r..
+frame 60
+..y..
+.oyy.
+.yoo.
+.dor.
+..d..

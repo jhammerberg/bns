@@ -1,6 +1,6 @@
 #!/bin/sh
 # Rebuild and restart the simulator whenever a .c/.h file under base/src,
-# common/ or sim/ is saved. Like pressing reset on the board: the firmware
+# common/ or sim/, or a sprite in art/, is saved (sprites are regenerated). Like pressing reset on the board: the firmware
 # starts over from main(). A failed build keeps the error on screen until
 # the next save. Ctrl-C to quit.
 #   make watch [PANELS=2]
@@ -9,12 +9,12 @@ cd "$(dirname "$0")" || exit 1
 PANELS=${PANELS:-1}
 BIN=build/bns-sim-${PANELS}p
 STAMP=build/.watch-stamp
-WATCH="../base/src ../common ."
+WATCH="../base/src ../common ../art ."
 pid=
 
 start() {
     printf '\033[2J\033[H' # clear screen
-    if make -s "$BIN" PANELS="$PANELS"; then
+    if python3 ../tools/gen_sprites.py >/dev/null && make -s "$BIN" PANELS="$PANELS"; then
         ./"$BIN" </dev/tty & # background jobs get /dev/null as stdin otherwise
         pid=$!
     else
@@ -36,7 +36,7 @@ mkdir -p build
 touch "$STAMP"
 start
 while sleep 0.3; do
-    changed=$(find $WATCH -newer "$STAMP" \( -name '*.c' -o -name '*.h' \) \
+    changed=$(find $WATCH -newer "$STAMP" \( -name '*.c' -o -name '*.h' -o -name '*.sprite' \) \
               -not -path './build/*' -print 2>/dev/null | head -1)
     if [ -n "$changed" ]; then
         touch "$STAMP" # before building, so saves during the build are caught next round

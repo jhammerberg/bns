@@ -1,0 +1,38 @@
+# Storm cloud for the shock spell: slowly churning, with a lit underside
+# right before the strike.
+sprite cloud
+palette  d=334  m=556  l=889  y=FF8
+
+clip churn pingpong
+frame 150
+....mmm......
+..mmllmmm.mm.
+.mmlllmmmmlm.
+mmmmmmmmmmmmm
+.dddmdddmddd.
+frame 150
+.....mmm.....
+..mmmllmm.m..
+.mmllmmmmmlm.
+mmmmmmmmmmmmm
+.ddmddddmddd.
+frame 150
+....mmmm.....
+.mmmlllmmmm..
+mmlllmmmmllmm
+mmmmmmmmmmmmm
+..dddmddddd..
+
+clip charged loop
+frame 40
+....mmm......
+..mmllmmm.mm.
+.mmlllmmmmlm.
+mmmmmmmmmmmmm
+.dyymdyymdyy.
+frame 40
+....mmm......
+..mmllmmm.mm.
+.mmlllmmmmlm.
+mmmmmmmmmmmmm
+.ydddyddyddd.

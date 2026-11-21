@@ -1,0 +1,45 @@
+# Fireball impact: flash, expanding ring, smoke.
+sprite explosion
+palette  w=FFC  y=FF4  o=F90  r=F30  s=333
+
+clip boom once
+frame 50 event=hit
+.........
+.........
+...yyy...
+..yywyy..
+..ywwwy..
+..yywyy..
+...yyy...
+.........
+.........
+frame 60
+.........
+..ooooo..
+.oyyyyyo.
+.oyw.wyo.
+.oy...yo.
+.oyw.wyo.
+.oyyyyyo.
+..ooooo..
+.........
+frame 70
+..r...r..
+.r.ooo.r.
+r.o...o.r
+.o.....o.
+.o.....o.
+.o.....o.
+r.o...o.r
+.r.ooo.r.
+..r...r..
+frame 90
+.s.....s.
+s.......s
+...s.s...
+.s.....s.
+.........
+.s.....s.
+...s.s...
+s.......s
+.s.....s.

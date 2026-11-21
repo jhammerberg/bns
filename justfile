@@ -45,3 +45,11 @@ flash target="xmc" port="":
         echo "unknown target {{target}}: use xmc, wand or receiver"; exit 1
         ;;
     esac
+
+# Regenerate base/src/assets/anim_assets.c from art/*.sprite
+sprites:
+    python3 tools/gen_sprites.py
+
+# Laptop tests: display encoder, animation timing
+test:
+    make -C sim test

@@ -21,7 +21,7 @@ HEADERS  := $(wildcard *.h stubs/*.h $(SRC_DIR)/*.h $(SRC_DIR)/*/*.h ../common/*
 CC     ?= cc
 CFLAGS ?= -std=gnu11 -O1 -g -Wall
 CFLAGS += -pthread -DHUB75_PANELS=$(PANELS) -DGAME_COUNTDOWN=0 -include stubs/sim_firmware.h \
-          -Istubs -I. -I$(SRC_DIR) -I$(SRC_DIR)/assets -I$(SRC_DIR)/display -I$(SRC_DIR)/game -I../common
+          -Istubs -I. -I$(SRC_DIR) -I$(SRC_DIR)/anim -I$(SRC_DIR)/assets -I$(SRC_DIR)/display -I$(SRC_DIR)/game -I../common
 
 BIN := build/bns-sim-$(PANELS)p
 
@@ -38,9 +38,14 @@ $(BIN): $(SIM_SRCS) $(FW_SRCS) $(HEADERS)
 	@mkdir -p build
 	$(CC) $(CFLAGS) -o $@ $(SIM_SRCS) $(FW_SRCS)
 
-# laptop test of the display encoder (base/src/display/hub75_encode.c)
-test: build/test_encode
+# laptop tests: display encoder, animation timing
+test: build/test_encode build/test_anim
 	@./build/test_encode
+	@./build/test_anim
+
+build/test_anim: test_anim.c $(SRC_DIR)/anim/anim.c $(SRC_DIR)/anim/anim.h
+	@mkdir -p build
+	$(CC) -std=c11 -O1 -Wall -Wextra -DHUB75_PANELS=2 -I$(SRC_DIR)/anim -I$(SRC_DIR)/display -o $@ test_anim.c $(SRC_DIR)/anim/anim.c $(SRC_DIR)/display/hub75_fb.c
 
 build/test_encode: test_encode.c $(SRC_DIR)/display/hub75_encode.c $(HEADERS)
 	@mkdir -p build

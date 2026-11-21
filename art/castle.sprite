@@ -1,0 +1,28 @@
+# Our castle (Hogwarts style), seen up close at the bottom of the play area.
+sprite castle
+palette  s=667  l=99A  k=334  r=238  R=35A  w=FB3  d=211  f=D21  y=DA2
+
+clip idle loop
+frame 1000
+..............fff.............
+..............Ry.........r....
+.............RRrr........r....
+.............RRrr.......Rrr...
+....r........lssk.......Rrr...
+....r........lssk......RRrrr..
+...Rrr.......lwwk......RRrrr..
+..RRrrr......lssk......lsssk..
+..RRrrr..s.s.lssks.s...lsssk..
+..lsssk..lssslssksssk..lsssk..
+..lsssk..lssssssssssk..lswsk..
+..lsssk..lswswsswswsk..lsssk..
+..lswsk..lssssssssssk..lsssk..
+..lssskk.lsssssssssskk.lsssk..
+..lssskkklsssssssssskkklswsk..
+..lssskkklswswsswswskkklsssk..
+..lswskkklsssssssssskkklsssk..
+..lssskkklssssddsssskkklsssk..
+..lssskkklssssddsssskkklsssk..
+..lssskkklssssddsssskkklsssk..
+..lssskkklssssddsssskkklsssk..
+..lssskkklssssddsssskkklsssk..
