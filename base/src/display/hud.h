@@ -43,10 +43,6 @@
 #define SPELL_ROW_X       2
 #define SPELL_SPACING     16
 
-// cast card: the last spell's symbol, big, in the middle of the play area
-#define CAST_CARD_MS    500
-#define CAST_CARD_SCALE 4
-
 // free space between the status rows and the spell row
 #define PLAY_AREA_Y      (MANA_NUMBER_Y + 5 + 1)
 #define PLAY_AREA_HEIGHT (SPELL_ROW_Y - 1 - PLAY_AREA_Y)
@@ -61,11 +57,8 @@ void draw_spell_row(const struct Player *player);
 void draw_victory_screen(bool userWon);
 void draw_countdown_number(char num);
 
-// big symbol of the player's last spell for CAST_CARD_MS, red if it fizzled;
-// otherwise keeps the play area clear
-void draw_cast_card(const struct Player *player, uint32_t now_ms);
-
-// whole in-game HUD for `player`, with `opponent` as the enemy
+// in-game HUD (health, mana, spell row) for `player`, with `opponent` as the
+// enemy; health bars glide to new values (player_shown_health)
 void draw_game(const struct Player *player, const struct Player *opponent, uint32_t now_ms);
 
 #endif // HUD_H

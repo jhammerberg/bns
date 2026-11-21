@@ -89,27 +89,9 @@ void draw_countdown_number(char num) {
     hub75_draw_char(num, COUNTDOWN_X, COUNTDOWN_Y, HUB75_WHITE, HUB75_BLACK);
 }
 
-void draw_cast_card(const struct Player *player, uint32_t now_ms) {
-    hub75_fill_rect(0, PLAY_AREA_Y, (int)HUB75_WIDTH, PLAY_AREA_HEIGHT, HUB75_BLACK);
-    if(player->lastCast == NULL || now_ms - player->lastCastMs >= CAST_CARD_MS) {
-        return;
-    }
-    const sprite_t *symbol = player->lastCast->symbol;
-    const int w = sprite_width(symbol) * CAST_CARD_SCALE;
-    const int h = sprite_height(symbol) * CAST_CARD_SCALE;
-    const int x = ((int)HUB75_WIDTH - w) / 2;
-    const int y = PLAY_AREA_Y + (PLAY_AREA_HEIGHT - h) / 2;
-    if(player->lastCastFailed) {
-        sprite_draw_scaled_tinted(symbol, x, y, CAST_CARD_SCALE, HUB75_RED);
-    } else {
-        sprite_draw_scaled(symbol, x, y, CAST_CARD_SCALE);
-    }
-}
-
 void draw_game(const struct Player *player, const struct Player *opponent, uint32_t now_ms) {
-    draw_health_bar(player->health);
-    draw_opponent_health_bar(opponent->health);
+    draw_health_bar(player_shown_health(player, now_ms));
+    draw_opponent_health_bar(player_shown_health(opponent, now_ms));
     draw_mana_bar(player->mana);
     draw_spell_row(player);
-    draw_cast_card(player, now_ms);
 }

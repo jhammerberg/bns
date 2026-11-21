@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include "player.h"
+#include "tween.h"
 
 cast_result_t castSpell(struct Player *player, struct Spell spell) {
     if(player->mana < spell.manaCost) {
@@ -49,19 +50,30 @@ void receiveSpell(struct Player *player, struct Spell spell) {
     }
 }
 
-cast_result_t castShape(struct Player *player, struct Player *opponent, bns_shape_t shape,
-                        uint32_t now_ms) {
+cast_result_t castShape(struct Player *player, bns_shape_t shape, uint32_t now_ms,
+                        const struct Spell **spell_out) {
     const struct Spell *spell = spellForShape(shape);
+    *spell_out = spell;
     if(spell == NULL) {
         return CAST_NO_SPELL;
     }
     const cast_result_t result = castSpell(player, *spell);
-    if(result == CAST_OK && spell->type == ATTACK) {
-        receiveSpell(opponent, *spell);
-    }
     player->lastCast = spell;
     player->lastCastMs = now_ms;
     player->lastCastFailed = result != CAST_OK;
     return result;
+}
+
+int player_shown_health(const struct Player *player, uint32_t now_ms) {
+    const int32_t t = tween_ease_out(tween_progress(now_ms - player->shownMs, HEALTH_GLIDE_MS));
+    return (int)tween_lerp(player->shownFrom, player->shownTo, t);
+}
+
+void player_track_health(struct Player *player, uint32_t now_ms) {
+    if(player->health != player->shownTo) {
+        player->shownFrom = player_shown_health(player, now_ms); // glide on from here
+        player->shownTo = player->health;
+        player->shownMs = now_ms;
+    }
 }
 

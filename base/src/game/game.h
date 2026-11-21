@@ -7,6 +7,7 @@
 #ifndef GAMES_H
 #define GAMES_H
 
+#include <stdbool.h>
 #include <stdint.h>
 #include "player.h"
 
@@ -26,12 +27,39 @@ typedef enum {
     PHASE_OVER,
 } game_phase_t;
 
+// Attacks in flight. Damage lands at the impact time, not at the cast, so a
+// shield raised while a fireball is in the air still blocks it.
+typedef enum {
+    EFFECT_FIREBALL,  // flies from the caster's castle to the other castle
+    EFFECT_LIGHTNING, // a cloud gathers over the target, then strikes
+} effect_kind_t;
+
+#define FIREBALL_FLIGHT_MS  700  // cast -> impact
+#define FIREBALL_TOTAL_MS   1400 // until the sparks are gone
+#define LIGHTNING_STRIKE_MS 450
+#define LIGHTNING_TOTAL_MS  1100
+#define MAX_EFFECTS         8
+
+typedef struct {
+    bool active;
+    bool landed;          // damage applied
+    uint8_t kind;         // effect_kind_t
+    uint8_t caster;       // 0 or 1 (players[] index); the target is the other one
+    uint32_t start_ms;
+    const struct Spell *spell;
+} effect_t;
+
 typedef struct {
     game_phase_t phase;
     uint32_t phase_start_ms;
     uint32_t last_regen_ms;
     struct Player players[2]; // [0] = wand 1 = panel 0, [1] = wand 2 = panel 1
+    effect_t effects[MAX_EFFECTS];
 } game_t;
+
+// impact and end time of an effect, relative to its start
+uint32_t effect_impact_ms(const effect_t *effect);
+uint32_t effect_total_ms(const effect_t *effect);
 
 // start a new round (countdown first, unless GAME_COUNTDOWN is 0)
 void game_init(game_t *game, uint32_t now_ms);
