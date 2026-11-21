@@ -63,9 +63,9 @@ void draw_countdown_number(char num);
 
 // big symbol of the player's last spell for CAST_CARD_MS, red if it fizzled;
 // otherwise keeps the play area clear
-void draw_cast_card(const struct Player *player);
+void draw_cast_card(const struct Player *player, uint32_t now_ms);
 
 // whole in-game HUD for `player`, with `opponent` as the enemy
-void draw_game(struct Player *player, struct Player *opponent);
+void draw_game(const struct Player *player, const struct Player *opponent, uint32_t now_ms);
 
 #endif // HUD_H

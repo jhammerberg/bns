@@ -1,8 +1,10 @@
 // Laptop stand-in for base/src/display/hub75.c (the XMC scan-out code), plus
 // the BSP stubs from stubs/cybsp.h. Drawing is the real hub75_fb.c.
 //
-// Like the real panels, the virtual panels only change when the firmware calls
-// hub75_refresh(), and go dark if it stops calling it.
+// Like the real display (a timer interrupt), the virtual panels keep showing
+// the last presented frame. hub75_present() paces the game loop at the same
+// frame rate as the board; if the loop stops presenting, the status line
+// says STALLED.
 
 #include <pthread.h>
 #include <stdarg.h>
@@ -14,16 +16,15 @@
 #include "sim.h"
 #include "timer.h"
 
-// The real panels stay lit only while hub75_refresh() keeps scanning; after
-// this long without a refresh the sim shows them dark.
-#define DARK_AFTER_US 100000u
+#define FRAME_US        (1000000u / 120u) // HUB75_FRAME_HZ in hub75.c
+#define STALLED_AFTER_US 100000u
 
 static pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 static uint8_t glass[HUB75_HEIGHT][HUB75_CHAIN_WIDTH]; // panel 0 first
-static uint64_t last_refresh_us;
-static bool blanked = true;
+static uint64_t last_present_us, next_frame_us;
+static bool blanked;
 static bool initialized;
-static uint32_t refresh_count, refreshes_per_s;
+static uint32_t frame_count, frames_in_window, frames_per_s;
 static uint64_t rate_window_us;
 
 uint64_t sim_now_us(void) {
@@ -45,55 +46,65 @@ hub75_status_t hub75_init(uint32_t cpu_hz) {
     if (cpu_hz < UINT32_C(1000000) || cpu_hz > UINT32_C(144000000)) {
         return HUB75_ERROR_CLOCK; // same check as the real driver
     }
+    last_present_us = next_frame_us = sim_now_us();
     initialized = true;
     return HUB75_OK;
 }
 
-void hub75_refresh(void) {
+void hub75_present(void) {
     if (!initialized) {
         return;
     }
+    // wait for the next frame boundary, like the board waits for its interrupt
+    const uint64_t now = sim_now_us();
+    if (next_frame_us > now) {
+        sleep_us(next_frame_us - now);
+    }
+    next_frame_us = (next_frame_us > now ? next_frame_us : now) + FRAME_US;
+
     pthread_mutex_lock(&lock);
+    hub75_fb_swap();
     // framebuffer columns are in chain (shift) order; the glass is drawn left to
     // right as panel 0, panel 1, ... so reorder each panel into place
     for (uint32_t panel = 0; panel < HUB75_PANELS; ++panel) {
         for (uint32_t y = 0; y < HUB75_HEIGHT; ++y) {
             memcpy(&glass[y][panel * HUB75_WIDTH],
-                   &hub75_framebuffer[y][HUB75_PANEL_COLUMN(panel)], HUB75_WIDTH);
+                   &(*hub75_front)[y][HUB75_PANEL_COLUMN(panel)], HUB75_WIDTH);
         }
     }
-    const uint64_t now = sim_now_us();
-    last_refresh_us = now;
-    blanked = false;
-    refresh_count++;
+    const uint64_t t = sim_now_us();
+    last_present_us = t;
+    frame_count++;
+    frames_in_window++;
     if (rate_window_us == 0) {
-        rate_window_us = now; // first refresh starts the 1 s counting window
-    } else if (now - rate_window_us >= 1000000u) {
-        refreshes_per_s = refresh_count;
-        refresh_count = 0;
-        rate_window_us = now;
+        rate_window_us = t;
+    } else if (t - rate_window_us >= 1000000u) {
+        frames_per_s = frames_in_window;
+        frames_in_window = 0;
+        rate_window_us = t;
     }
     pthread_mutex_unlock(&lock);
-
-    // Take about as long as the real busy-wait scan (hub75.c): per row pair,
-    // 2 us per column across the chain plus ~25 us latch/address/on-time.
-    sleep_us((HUB75_HEIGHT / 2u) * (HUB75_CHAIN_WIDTH * 2u + 25u));
 }
 
-void hub75_blank(void) {
-    if (!initialized) {
-        return;
-    }
+void hub75_blank(bool blank) {
     pthread_mutex_lock(&lock);
-    blanked = true;
+    blanked = blank;
     pthread_mutex_unlock(&lock);
+}
+
+void hub75_get_stats(uint32_t *frames, uint32_t *busy_us) {
+    pthread_mutex_lock(&lock);
+    *frames = frame_count;
+    pthread_mutex_unlock(&lock);
+    *busy_us = 0; // no display interrupt on a laptop
 }
 
 void sim_glass_read(sim_glass_t *out) {
     pthread_mutex_lock(&lock);
     memcpy(out->px, glass, sizeof glass);
-    out->lit = !blanked && sim_now_us() - last_refresh_us < DARK_AFTER_US;
-    out->refreshes_per_s = out->lit ? refreshes_per_s : 0;
+    out->lit = initialized && !blanked;
+    out->stalled = initialized && sim_now_us() - last_present_us > STALLED_AFTER_US;
+    out->frames_per_s = out->stalled ? 0 : frames_per_s;
     pthread_mutex_unlock(&lock);
 }
 
@@ -119,6 +130,10 @@ void timer_init(void) {
 
 uint32_t millis(void) {
     return (uint32_t)((sim_now_us() - timer_start_us) / 1000u);
+}
+
+uint32_t micros(void) {
+    return (uint32_t)(sim_now_us() - timer_start_us);
 }
 
 // ---- debug UART -> out/uart.log + tail for the status area ----

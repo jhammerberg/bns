@@ -2,7 +2,6 @@
 #include "hub75_text.h"
 #include "spells.h"
 #include "sprite.h"
-#include "timer.h"
 
 // Bar showing value/max: white background, `color` fill. Any value above 0
 // shows at least one pixel so it never looks empty when it isn't.
@@ -75,7 +74,7 @@ void draw_spell_row(const struct Player *player) {
 
 void draw_victory_screen(bool userWon) {
     hub75_draw_text(userWon ? "YOU WON!:)" : "YOU LOST:(", 3, 18, HUB75_WHITE, HUB75_BLACK);
-    hub75_draw_text_small("Hold reset to", 6, 44, HUB75_WHITE, HUB75_BLACK);
+    hub75_draw_text_small("Cast to", 18, 44, HUB75_WHITE, HUB75_BLACK);
     hub75_draw_text_small("play again", 12, 50, HUB75_WHITE, HUB75_BLACK);
 }
 
@@ -90,9 +89,9 @@ void draw_countdown_number(char num) {
     hub75_draw_char(num, COUNTDOWN_X, COUNTDOWN_Y, HUB75_WHITE, HUB75_BLACK);
 }
 
-void draw_cast_card(const struct Player *player) {
+void draw_cast_card(const struct Player *player, uint32_t now_ms) {
     hub75_fill_rect(0, PLAY_AREA_Y, (int)HUB75_WIDTH, PLAY_AREA_HEIGHT, HUB75_BLACK);
-    if(player->lastCast == NULL || millis() - player->lastCastMs >= CAST_CARD_MS) {
+    if(player->lastCast == NULL || now_ms - player->lastCastMs >= CAST_CARD_MS) {
         return;
     }
     const sprite_t *symbol = player->lastCast->symbol;
@@ -107,10 +106,10 @@ void draw_cast_card(const struct Player *player) {
     }
 }
 
-void draw_game(struct Player *player, struct Player *opponent) {
+void draw_game(const struct Player *player, const struct Player *opponent, uint32_t now_ms) {
     draw_health_bar(player->health);
     draw_opponent_health_bar(opponent->health);
     draw_mana_bar(player->mana);
     draw_spell_row(player);
-    draw_cast_card(player);
+    draw_cast_card(player, now_ms);
 }

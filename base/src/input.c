@@ -3,9 +3,10 @@
 // Wiring (docs/base-wiring.html): XIAO D6 (TX) -> Arduino D0 = P2.15
 // (U1C0.DX0C), Arduino D1 = P2.14 (U1C0.DOUT0) -> XIAO D7, common GND.
 // Each shape arrives as BNS_UART_SYNC followed by one bns_packet_t.
-// A 32-byte hardware FIFO holds bytes while hub75_refresh() busy-waits.
+// A 32-byte hardware FIFO holds bytes between polls (one poll per frame).
 
 #include "input.h"
+#include "stats.h"
 #include "xmc_gpio.h"
 #include "xmc_uart.h"
 
@@ -51,6 +52,7 @@ static bool packet_valid(const bns_packet_t *p) {
 bool input_poll(bns_packet_t *out) {
     while (!XMC_USIC_CH_RXFIFO_IsEmpty(UART_CH)) {
         const uint8_t byte = (uint8_t)XMC_USIC_CH_RXFIFO_GetData(UART_CH);
+        stats_rx_bytes(1);
         if (!in_frame) {
             in_frame = byte == BNS_UART_SYNC;
             frame_len = 0;
@@ -63,7 +65,9 @@ bool input_poll(bns_packet_t *out) {
         in_frame = false;
         bns_packet_t pkt;
         __builtin_memcpy(&pkt, frame, sizeof pkt);
-        if (packet_valid(&pkt)) {
+        const bool ok = packet_valid(&pkt);
+        stats_packet(ok);
+        if (ok) {
             *out = pkt;
             return true;
         }

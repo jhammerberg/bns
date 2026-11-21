@@ -33,9 +33,11 @@ struct Player {
 
 cast_result_t castSpell(struct Player *player, struct Spell spell);
 void receiveSpell(struct Player *player, struct Spell spell);
-// A wand drew `shape`: cast the matching spell if affordable; attacks hit
-// `opponent`. Records the attempt in player->lastCast* for the HUD.
-cast_result_t castShape(struct Player *player, struct Player *opponent, bns_shape_t shape);
+// A wand drew `shape` at time now_ms: cast the matching spell if affordable;
+// attacks hit `opponent`. Records the attempt in player->lastCast* for the HUD.
+cast_result_t castShape(struct Player *player, struct Player *opponent, bns_shape_t shape,
+                        uint32_t now_ms);
+
 void registerReset(struct Player *player, bool reset);
 
 #endif // PLAYER_H

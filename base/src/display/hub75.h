@@ -1,37 +1,22 @@
 /*
- * Init after cybsp_init() and SystemCoreClockUpdate(), then draw the image.
- * Keep calling hub75_refresh() in main, even if nothing has changed.
- * Drawing only changes the buffer; refresh actually sends it to the panel.
- * This still uses GPIO writes and busy waits, not DMA or a timer ISR.
+ * Driver for the chained 64x64 HUB75 panels.
  *
- * Pinout is in dev folder.
+ * hub75_init() starts a timer interrupt that scans one row pair at a time in
+ * the background, so the panels stay lit and evenly bright whatever the game
+ * loop is doing. Drawing goes into a back buffer; hub75_present() hands it to
+ * the display at the next frame boundary (double buffering, no half-drawn
+ * frames) and waits for that, which also paces the game loop to the frame
+ * rate. After present the back buffer holds an old frame: redraw everything.
  *
- * x and y are 0..63. RGB1 handles row n, RGB2 handles row n+32.
- * Columns are sent in increasing x order. If the image looks mirrored,
- * check a drawing that is different on each side before changing the mapping.
- * Pixels outside the screen are ignored. Rectangles are clipped to fit.
- * Colors use bits 0, 1, 2 for red, green, blue. Other bits are ignored.
- *
- * Clear the old area before drawing a shorter bar, or the extra pixels stay.
- * Make drawing changes between refresh calls. There is only one buffer,
- * so do not change it from an interrupt while a scan is reading it.
- *
- * Each call scans all 32 row pairs. The delays take about 4.9 ms, plus the
- * time spent running the code and any interrupts. The LEDs are off between
- * calls, so long waits in main make the display dim or flicker.
- * Moving the same scan into an ISR would still take up the CPU.
- *
- * Pass the CPU clock in Hz and keep it fixed after init. Delays use the DWT
- * cycle counter, so leave that running. This does not need CCU4 or SysTick.
- *
- * Blank just sets OE high; the image stays in RAM. It does not disconnect
- * the signal pins, so the normal power sequence still matters.
- * Pausing with OE low leaves a row on. Blank before a long debugger pause.
+ * x and y are 0..63 within the selected panel. Pixels outside are ignored,
+ * rectangles are clipped. Colors use bits 0, 1, 2 for red, green, blue.
+ * Pass the CPU clock in Hz; delays use the DWT cycle counter.
  */
 
 #ifndef HUB75_H
 #define HUB75_H
 
+#include <stdbool.h>
 #include <stdint.h>
 
 #ifdef __cplusplus
@@ -77,10 +62,10 @@ hub75_status_t hub75_init(uint32_t cpu_hz);
 // out-of-range panel numbers are ignored
 void hub75_select_panel(uint32_t panel);
 
-// clear the selected panel to black, then keep refreshing
+// clear the selected panel to black
 void hub75_clear(void);
 
-// fill the selected panel with one color. Still need to refresh afterward
+// fill the selected panel with one color
 void hub75_fill(hub75_color_t color);
 
 // set one pixel, ignoring coordinates outside the screen
@@ -93,13 +78,16 @@ hub75_color_t hub75_get_pixel(int32_t x, int32_t y);
 // x/y can be negative. Width or height <= 0 does nothing
 void hub75_fill_rect(int32_t x, int32_t y, int32_t width, int32_t height, hub75_color_t color);
 
-// scan the whole image once, then return with the LEDs off
-// call repeatedly from main. Does nothing before a successful init
-void hub75_refresh(void);
+// show what has been drawn: swaps buffers at the next frame boundary and
+// waits for it (at most one frame). Does nothing before a successful init
+void hub75_present(void);
 
-// turn the LEDs off without clearing the buffer
-// next refresh shows it again. Does nothing before init
-void hub75_blank(void);
+// turn the LEDs off (true) or back on (false); the image is kept
+void hub75_blank(bool blank);
+
+// counters for diagnostics: frames shown, and microseconds spent in the
+// display interrupt, both since init
+void hub75_get_stats(uint32_t *frames, uint32_t *busy_us);
 
 #ifdef __cplusplus
 }

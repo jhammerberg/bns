@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "player.h"
-#include "timer.h"
 
 cast_result_t castSpell(struct Player *player, struct Spell spell) {
     if(player->mana < spell.manaCost) {
@@ -52,7 +51,8 @@ void receiveSpell(struct Player *player, struct Spell spell) {
     }
 }
 
-cast_result_t castShape(struct Player *player, struct Player *opponent, bns_shape_t shape) {
+cast_result_t castShape(struct Player *player, struct Player *opponent, bns_shape_t shape,
+                        uint32_t now_ms) {
     const struct Spell *spell = spellForShape(shape);
     if(spell == NULL) {
         return CAST_NO_SPELL;
@@ -62,7 +62,7 @@ cast_result_t castShape(struct Player *player, struct Player *opponent, bns_shap
         receiveSpell(opponent, *spell);
     }
     player->lastCast = spell;
-    player->lastCastMs = millis();
+    player->lastCastMs = now_ms;
     player->lastCastFailed = result != CAST_OK;
     return result;
 }
@@ -70,4 +70,3 @@ cast_result_t castShape(struct Player *player, struct Player *opponent, bns_shap
 void registerReset(struct Player *player, volatile bool reset) {
     player->reset = reset;
 }
-

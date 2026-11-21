@@ -5,11 +5,12 @@
 #include <stdint.h>
 #include "hub75.h"
 
-// What the panels physically show, as of the last hub75_refresh().
+// What the panels physically show: the last presented frame.
 typedef struct {
     uint8_t px[HUB75_HEIGHT][HUB75_CHAIN_WIDTH];
-    bool lit;                 // false: not refreshed recently / blanked -> LEDs off
-    uint32_t refreshes_per_s; // how often the firmware is calling hub75_refresh
+    bool lit;              // false before init or while blanked -> LEDs off
+    bool stalled;          // game loop hasn't presented a frame for 100 ms
+    uint32_t frames_per_s; // frames presented by the game loop
 } sim_glass_t;
 
 // thread-safe copy of the current glass (called by the display loop)

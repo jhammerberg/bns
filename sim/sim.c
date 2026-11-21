@@ -174,11 +174,11 @@ int main(int argc, char **argv) {
                 snprintf(wands, sizeof wands, "   receiver: %u shapes", serial_shapes);
             }
             snprintf(status, sizeof status,
-                     "%ux%u  %s  %u refresh/s   cast: 1-4 player 1, 7-0 player 2 "
+                     "%ux%u  %s  %u fps   cast: 1-4 player 1, 7-0 player 2 "
                      "(tri zig circ v)   R resets   Ctrl-C quits%s",
                      (unsigned)HUB75_CHAIN_WIDTH, (unsigned)HUB75_HEIGHT,
-                     g.lit ? "LIT" : "DARK (firmware not calling hub75_refresh)",
-                     g.refreshes_per_s, wands);
+                     !g.lit ? "DARK" : g.stalled ? "STALLED (game loop not presenting)" : "OK",
+                     g.frames_per_s, wands);
             sim_uart_tail(tail, sizeof tail, 6);
             render_terminal(&g, status, tail);
         }
@@ -199,8 +199,8 @@ int main(int argc, char **argv) {
     render_png("out/frame.png", &g); // final state
     terminal_restore();
     if (live) fputs("\x1b[0m\x1b[?25h\n", stdout); // restore cursor
-    printf("panels %s, %u refresh/s; wrote out/frame.png, out/uart.log\n",
-           g.lit ? "lit" : "DARK", g.refreshes_per_s);
+    printf("panels %s, %u fps; wrote out/frame.png, out/uart.log\n",
+           !g.lit ? "DARK" : g.stalled ? "STALLED" : "ok", g.frames_per_s);
     if (serial_fd >= 0) {
         printf("receiver: %u shapes\n", serial_shapes);
     }
