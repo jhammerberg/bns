@@ -172,3 +172,6 @@ esp/*/dependencies.lock
 # Simulator output
 sim/build/
 sim/out/
+
+# Wand recogniser laptop test binary
+esp/wand/test/test_shapes

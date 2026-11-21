@@ -12,6 +12,7 @@
 #include "cybsp.h"
 #include "hub75_fb.h"
 #include "sim.h"
+#include "timer.h"
 
 // The real panels stay lit only while hub75_refresh() keeps scanning; after
 // this long without a refresh the sim shows them dark.
@@ -99,6 +100,18 @@ cy_rslt_t cybsp_init(void) {
 
 void XMC_Delay(uint32_t ms) {
     sleep_us((uint64_t)ms * 1000u);
+}
+
+// ---- base/src/timer.h (the real one uses the XMC SysTick) ----
+
+static uint64_t timer_start_us;
+
+void timer_init(void) {
+    timer_start_us = sim_now_us();
+}
+
+uint32_t millis(void) {
+    return (uint32_t)((sim_now_us() - timer_start_us) / 1000u);
 }
 
 // ---- debug UART -> out/uart.log + tail for the status area ----

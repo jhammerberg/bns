@@ -3,4 +3,11 @@ menu "BNS wand"
         int "Wand ID (1 or 2)"
         range 1 2
         default 1
+
+    config BNS_WAND_LOG_IMU
+        bool "Stream raw IMU samples over USB (for recording new shapes)"
+        default n
+        help
+            Prints one CSV line ("imu,...") per 100 Hz sample. Needed for
+            recording sessions; leave off on battery, where nothing reads it.
 endmenu

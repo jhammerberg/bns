@@ -12,12 +12,24 @@
 
 #include <stdint.h>
 
-#define BNS_PROTOCOL_VERSION 1
+#define BNS_PROTOCOL_VERSION 2
 #define BNS_UART_SYNC        0xA5
 #define BNS_UART_BAUD        115200
 #define BNS_RADIO_CHANNEL    1     /* Wi-Fi channel all ESP-NOW boards use */
 
-/* Matches enum inputs in base/src/game/spells.h. */
+/* Shape drawn with the wand (held draw button), recognised on the wand. */
+typedef enum {
+    BNS_SHAPE_NONE     = 0, /* heartbeat / nothing recognised */
+    BNS_SHAPE_TRIANGLE = 1,
+    BNS_SHAPE_ZIGZAG   = 2,
+    BNS_SHAPE_CIRCLE   = 3,
+    BNS_SHAPE_V        = 4,
+    BNS_SHAPE_COUNT
+} bns_shape_t;
+
+/* Directional input from the old arrow-combo design. Not sent over the radio
+ * any more; kept because base/src/game/spells.c still checks enum inputs
+ * against it. Matches enum inputs in base/src/game/spells.h. */
 typedef enum {
     BNS_DIR_UP    = 0,
     BNS_DIR_RIGHT = 1,
@@ -30,7 +42,7 @@ typedef struct __attribute__((packed)) {
     uint8_t version;   /* BNS_PROTOCOL_VERSION */
     uint8_t wand_id;   /* 1 or 2 */
     uint8_t seq;       /* increments per packet; receiver drops repeats */
-    uint8_t direction; /* bns_direction_t */
+    uint8_t shape;     /* bns_shape_t */
 } bns_packet_t;
 
 _Static_assert(sizeof(bns_packet_t) == 4, "bns_packet_t must stay 4 bytes");

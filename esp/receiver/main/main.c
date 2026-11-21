@@ -1,6 +1,7 @@
 /*
  * Receiver: one XIAO at the base hears both wands over ESP-NOW and forwards
- * each packet to the XMC4700 over UART as BNS_UART_SYNC + bns_packet_t.
+ * each recognised shape to the XMC4700 over UART as BNS_UART_SYNC +
+ * bns_packet_t. Heartbeats (shape NONE) are logged, not forwarded.
  *
  * UART: XIAO D6 (GPIO16) TX -> XMC RX, D7 (GPIO17) RX <- XMC TX, common GND.
  * Note: the ESP32 ROM prints a boot message on GPIO16 at reset; the base
@@ -23,6 +24,7 @@
 #define BASE_UART_RX 17 // XIAO D7
 
 static const char *TAG = "receiver";
+static const char *const SHAPE_NAMES[BNS_SHAPE_COUNT] = {"none", "triangle", "zigzag", "circle", "v"};
 static QueueHandle_t rx_queue;
 
 // Runs in the Wi-Fi task: validate and hand off, nothing slow here.
@@ -34,7 +36,8 @@ static void on_recv(const esp_now_recv_info_t *info, const uint8_t *data, int le
     }
     bns_packet_t pkt;
     memcpy(&pkt, data, sizeof pkt);
-    if (pkt.version != BNS_PROTOCOL_VERSION || pkt.wand_id < 1 || pkt.wand_id > 2) {
+    if (pkt.version != BNS_PROTOCOL_VERSION || pkt.wand_id < 1 || pkt.wand_id > 2 ||
+        pkt.shape >= BNS_SHAPE_COUNT) {
         return;
     }
     xQueueSend(rx_queue, &pkt, 0);
@@ -85,6 +88,7 @@ void app_main(void)
     ESP_LOGI(TAG, "listening on channel %d", BNS_RADIO_CHANNEL);
 
     int last_seq[3] = {-1, -1, -1}; // index by wand_id
+    unsigned heartbeats[3] = {0, 0, 0};
     bns_packet_t pkt;
     for (;;) {
         if (xQueueReceive(rx_queue, &pkt, portMAX_DELAY) != pdTRUE) {
@@ -95,9 +99,18 @@ void app_main(void)
         }
         last_seq[pkt.wand_id] = pkt.seq;
 
+        if (pkt.shape == BNS_SHAPE_NONE) {
+            // heartbeat: don't forward, just note the wand is alive every 5 s
+            if (++heartbeats[pkt.wand_id] % 5 == 1) {
+                ESP_LOGI(TAG, "wand %u alive (seq=%u)", pkt.wand_id, pkt.seq);
+            }
+            continue;
+        }
+
         const uint8_t sync = BNS_UART_SYNC;
         uart_write_bytes(BASE_UART, &sync, 1);
         uart_write_bytes(BASE_UART, &pkt, sizeof pkt);
-        ESP_LOGI(TAG, "wand %u seq=%u dir=%u", pkt.wand_id, pkt.seq, pkt.direction);
+        ESP_LOGI(TAG, "wand %u seq=%u shape=%s", pkt.wand_id, pkt.seq,
+                 pkt.shape < BNS_SHAPE_COUNT ? SHAPE_NAMES[pkt.shape] : "?");
     }
 }

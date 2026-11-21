@@ -9,8 +9,10 @@ SECONDS ?= 2
 SRC_DIR := ../base/src
 
 # all firmware sources except the XMC-only ones: main.c is pulled in via
-# firmware_main.c, hub75.c is replaced by hub75_sim.c, imu.c needs real I2C
-FW_SRCS := $(filter-out $(SRC_DIR)/main.c $(SRC_DIR)/imu.c $(SRC_DIR)/display/hub75.c, \
+# firmware_main.c, hub75.c and timer.c are replaced by hub75_sim.c, imu.c
+# needs real I2C
+FW_SRCS := $(filter-out $(SRC_DIR)/main.c $(SRC_DIR)/imu.c $(SRC_DIR)/display/hub75.c \
+             $(SRC_DIR)/timer.c, \
              $(wildcard $(SRC_DIR)/*.c $(SRC_DIR)/*/*.c))
 SIM_SRCS := sim.c hub75_sim.c render.c firmware_main.c
 HEADERS  := $(wildcard *.h stubs/*.h $(SRC_DIR)/*.h $(SRC_DIR)/*/*.h ../common/*.h)
