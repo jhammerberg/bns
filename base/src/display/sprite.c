@@ -1,3 +1,7 @@
+#if defined(__GNUC__) && !defined(__clang__)
+#pragma GCC optimize("O2") // drawn every frame: built optimised even in Debug
+#endif
+
 #include "sprite.h"
 #include <stdbool.h>
 #include <string.h>

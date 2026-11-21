@@ -1,6 +1,10 @@
 // Drawing into the back framebuffer. No hardware access here, so this file
 // also builds on a laptop for the simulator (sim/).
 
+#if defined(__GNUC__) && !defined(__clang__)
+#pragma GCC optimize("O2") // drawn every frame: built optimised even in Debug
+#endif
+
 #include "hub75_fb.h"
 
 static hub75_frame_t frames[2];
